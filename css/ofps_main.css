@@ -66,15 +66,15 @@ h1, h2, h3, h4, h5 {
 }
 
 h1 {
-  font-size: 2em; /* 16x1.5=24px */
+  font-size: 2em;
   line-height: 2em;/* 16x1.636=36px */
   margin: 0;
   text-align: center;
 }
 
 h2 {
-  font-size: 1.25em; /* 16x1.25=20px */
-  margin:2em 0 1em; /* 18x1=18px */
+  font-size: 1.25em;
+  margin-bottom: 0.4em;
 }
 
 h3 {
@@ -139,7 +139,30 @@ a:hover {
   margin-left: 26px;
 }
 
-/* DocBook Inlines */
+.chapter .sect1 table {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.chapter .sect1 table tr td{
+  padding-right: 18px;
+}
+
+.chapter ul {
+  list-style-type: none;
+}
+
+.chapter .comment_container {
+  position: relative;
+}
+
+.chapter .comment_container p.comment_count {
+  position: absolute;
+  right: -121px;
+  bottom: 3px;
+}
+
+ DocBook Inlines 
 .term {
   font-weight:bold;
 }
