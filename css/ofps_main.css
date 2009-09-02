@@ -31,7 +31,7 @@ body {
 
 body > div {
   margin-top: 0;
-  max-width: 42em;
+  max-width: 560px;
   margin-right: auto;
   margin-left: auto;
   padding: 2em;
@@ -66,29 +66,27 @@ h1, h2, h3, h4, h5 {
   color: #000;
   font-family: Lucida Bright, Constantia, Georgia, serif;
   font-weight: bold;
+  margin: 0;
 }
 
 h1 {
   font-size: 2em;
   line-height: 2em;/* 16x1.636=36px */
-  margin: 0;
   text-align: center;
 }
 
 h2 {
   font-size: 1.75em; /* 16x1.25=20px */
-  margin:2em 0 1em; /* 18x1=18px */
   line-height: 1em;
+  margin: 0.5em 0;
 }
 
 h3 {
   font-size: 1.125em; /* 16x1.125=18px */
-  margin:2em 0 1em; /* 18x1=18px */
 }
 
 h4 {
   font-size: 1.0625em; /* 16x1.0625=17px */
-  margin:2em 0 1em; /* 18x1=18px */
 }
 
 h1.title {
@@ -109,19 +107,20 @@ h2.title {
 p {
   font-size: 1em; /* 16x1=16px */
   line-height: 1.2em;
-  margin: 1em 0; /* 14x1=14px */
+  margin-bottom: 0.5em;
+  margin-top: 0.25em;
 }
 
 /* No <tt>s are produced by the XHTML DocBook-XSL output, but we'll be safe... */
-pre, code, tt { 
-  font-family: Consolas, 'Bitstream Vera Sans Mono', 'andale mono','lucida console',monaco,monospace;
-  font-size: 1em;
+pre, code, tt {
+  font: 1em Consolas, 'Bitstream Vera Sans Mono', 'andale mono','lucida console',monaco,monospace;
 }
 pre {
   background: #F2F2F2;
   padding: 1em;
   margin: 1em 0;
   border: 1px solid #ddd;
+  font-size: 11px;
 }
 
 /* Links */
@@ -145,7 +144,7 @@ a:hover {
   text-decoration: underline;
 }
 
-.toc dl {
+dl {
   margin: 0;
 }
 
@@ -157,27 +156,32 @@ a:hover {
   margin-left: 26px;
 }
 
-.chapter .sect1 table {
+.chapter p,
+.refentry p {
+  /*width: 30em;*/
+}
+
+.sect1 table {
   margin-right: auto;
   margin-left: auto;
 }
 
-.chapter .sect1 table tr td{
+.sect1 table tr td{
   padding-right: 18px;
 }
 
-.chapter ul {
+ul {
   list-style-type: none;
 }
 
-.chapter .comment_container {
+.comment_container {
   position: relative;
 }
 
-.chapter .comment_container p.comment_count {
+.comment_container p.comment_count {
   position: absolute;
-  right: -121px;
-  bottom: 3px;
+  right: -133px;
+  bottom: 12px;
 }
 
  DocBook Inlines 
