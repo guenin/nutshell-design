@@ -1,0 +1,1068 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="js/jquery-1.3.2.min.js" type="text/javascript"></script>
+    
+    <script src="js/openfeedback.js" type="text/javascript"></script>
+        
+
+    <link rel="alternate" type="application/atom+xml" title="Comments on this page" href="comments/feed/ch04.html" />
+    <link rel="alternate" type="application/atom+xml" title="All comments on Rails in a Nutshell" href="comments/feed%3Fid=book" />
+
+        <title>Chapter 4. Active Resource</title><link rel="stylesheet" href="css/ofps_main.css" type="text/css" /><link rel="stylesheet" href="css/ofps_ui.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.74.3" /><link rel="home" href="index.html" title="Rails in a Nutshell" /><link rel="up" href="index.html" title="Rails in a Nutshell" /><link rel="prev" href="ch03.html" title="Chapter 3. Active Record" /><link rel="next" href="ch05.html" title="Chapter 5. Action Mailer" /></head><body><div class="oreilly-header"><ul><li><p><a href="http://oreilly.com/"><img alt="O'Reilly Logo" src="oreilly-logo.jpg" /></a></p></li><li><p id="oreilly-breadcrumbs"><a href="http://labs.oreilly.com/">Labs</a> &gt; <a href="http://labs.oreilly.com/ofps.html">OFPS</a> &gt; <a href="index.html">Rails in a Nutshell</a></p></li><li><p class="login">
+
+          <a href="signin.html">Sign-in</a> or 
+          <a href="register.html">Register</a>
+
+            </p></li><li><p class="ofps-show-hide-all-comments"><a href="ch04.html#" class="ofps-show-hide-all-comments-toggle">Show all comments</a></p></li><li><p><a href="http://labs.oreilly.com/ofps.html">Help</a></p></li></ul></div><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 4. Active Resource</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch03.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch05.html">Next</a></td></tr></table><hr /></div><div class="chapter" lang="en" id="activeresource_id59243" xml:lang="en"><div class="titlepage"><div><div><h2 class="title">Chapter 4. Active Resource</h2></div></div></div><p id="activeresource_id323680">Today more than ever, applications need to be able to interoperate not only with browser
+        based clients, but with other applications. In order to accomplish interoperability web
+        applications commonly offer a web service <abbr class="abbrev">API</abbr>. A web service <abbr class="abbrev">API</abbr> offers remote access to an application over a network, such as the internet.
+        In the past web service <abbr class="abbrev">API</abbr>s were commonly offered using complex and bulky
+            <acronym class="acronym">SOAP</acronym> based web services that were slow to implement and hard to
+        understand. With the advent of Rails and the rise of <acronym class="acronym">REST</acronym> based web
+        services there has become a faster, simpler way to offer and consume web services. </p><div class="comment_container" name="c_activeresource_id323680" id="c_activeresource_id323680"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id323680">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id362793">Rails makes it easy to offer multiple different content types, or representations, of a
+        particular resource through a single controller action. Being able offer multiple
+        representations of a resource through a single controller action makes adding support for
+        non browser based <abbr class="abbrev">HTML</abbr> clients as simple as adding a few lines of code that
+        returns the resource in the representation the client requested. The controller layout and
+        logic of the application is preserved with the added benefit of interoperability with new
+        clients.</p><div class="comment_container" name="c_activeresource_id362793" id="c_activeresource_id362793"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362793">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id362809">Active Resource provides the tools to quickly and easily consume <acronym class="acronym">REST</acronym>
+        based web services conforming to the Rails <acronym class="acronym">REST</acronym>ful <acronym class="acronym">URI</acronym>
+        structure and protocol conventions. Active Resource automatically maps the response from any
+        conforming service to rich Ruby objects. Active Resource also provides all the lifecycle
+        methods needed to easily find, create, update, and delete resources without having to write
+        any code.</p><div class="comment_container" name="c_activeresource_id362809" id="c_activeresource_id362809"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362809">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id362830">Following is a simple definition for an Active Resource model:</p><div class="comment_container" name="c_activeresource_id362830" id="c_activeresource_id362830"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362830">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id362834"><pre class="programlisting" id="activeresource_id362836">class Person &lt; ActiveResource::Base
+  self.site = "http://webservice.example.com"
+end</pre><div class="comment_container" name="c_activeresource_id362836" id="c_activeresource_id362836"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362836">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id362845">With only this simple subclass of <code class="classname">ActiveResource::Base</code> and a
+            <code class="literal">site</code> definition, which tells Active Resource the base endpoint
+            <acronym class="acronym">URI</acronym> of the remote web service, it is possible to find, create,
+        update, and delete resources :</p><div class="comment_container" name="c_activeresource_id362845" id="c_activeresource_id362845"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362845">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id362861"><pre class="programlisting" id="activeresource_id362863"># Build and save a new person
+person = Person.new(:name =&gt; "Cody", :title =&gt; "Developer")
+person.save # =&gt; true
+
+# Find an existing person
+person = Person.find(1)
+
+# Access a dynamically generated attribute
+person.title # =&gt; "Developer"
+
+# Update the attribute
+person.title = "Unemployed"
+
+# Save changes back to the remote service
+person.save # =&gt; true
+
+# Delete the person
+person.destroy # =&gt; true</pre><div class="comment_container" name="c_activeresource_id362863" id="c_activeresource_id362863"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362863">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id362875">As you can see, the functionality of an Active Resource based model is very similar to
+        that of an Active Record based model. The only difference being that the data source is a
+        remote web service rather than a <acronym class="acronym">SQL</acronym> database. This chapter provides
+        coverage of all the main functionality of Active Resource and shows you how Active Resource
+        works under the hood so that you can implement your own <acronym class="acronym">REST</acronym>ful Rails web
+        services.</p><div class="comment_container" name="c_activeresource_id362875" id="c_activeresource_id362875"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362875">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activeresource_id362892">Getting Started</h2></div></div></div><p id="activeresource_id362897">Active Resource is included in Rails. If you'll be using Active Resource within a
+            Rails project you need to ensure that <code class="literal">:active_resource</code> is not in the
+            list of frameworks being excluded during initialization in your Rails <code class="filename">config/environment.rb</code> file:</p><div class="comment_container" name="c_activeresource_id362897" id="c_activeresource_id362897"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362897">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id362911"><pre class="programlisting" id="activeresource_id362913"># Ensure that :active_resource does not appear in the following line
+config.frameworks -= [ :active_resource ]</pre><div class="comment_container" name="c_activeresource_id362913" id="c_activeresource_id362913"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362913">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id362921">To use Active Resource outside of a Rails project the easiest way to get started is to
+            use Active Resource through Ruby Gems:</p><div class="comment_container" name="c_activeresource_id362921" id="c_activeresource_id362921"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362921">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id362926"><pre class="programlisting" id="activeresource_id362928">require 'rubygems'
+require 'active_resource'</pre><div class="comment_container" name="c_activeresource_id362928" id="c_activeresource_id362928"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362928">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id362934">For more information on installing Rails as a Ruby Gem see <a class="xref" href="ch04.html">???</a>.</p><div class="comment_container" name="c_activeresource_id362934" id="c_activeresource_id362934"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362934">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activeresource_id362942">Background</h2></div></div></div><p id="activeresource_id362948">Active Resource is only a small piece of a much larger puzzle. Active Resource is
+            dependent on the remote web service conforming to the Rails <acronym class="acronym">REST</acronym>ful
+                <acronym class="acronym">URL</acronym> structure and data serialization conventions. The web service
+            does not have to be provided by a Rails application, but this is the most common case
+            because Rails makes it so easy to create a <acronym class="acronym">REST</acronym>ful, web service
+            enabled application.</p><div class="comment_container" name="c_activeresource_id362948" id="c_activeresource_id362948"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362948">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id362968">There are two benefits to understanding Active Resource. The first benefit is the
+            ability to quickly and easily create an Active Resource client for someone else's web
+            service. The second benefit is being able to easily expose your own application to
+            Active Resource clients. We're going to take a look under the hood at the communication
+            between an Active Resource client and a Rails application in order to build a complete
+            understanding of web services in Rails.</p><div class="comment_container" name="c_activeresource_id362968" id="c_activeresource_id362968"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362968">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id362971">Active Resource is able to easily consume a web service offered by Rails application
+            conforming to a <acronym class="acronym">REST</acronym>ful architecture because of the consistent
+                <acronym class="acronym">URL</acronym> layout and behavior Representational State Transfer (<acronym class="acronym">REST</acronym>) imposes on the application. <acronym class="acronym">REST</acronym> works with the
+            concept of resources, which are sources of information that can be uniquely addressed by
+            a <acronym class="acronym">URI</acronym>. Clients of an application exchange representations of
+            resources via <abbr class="abbrev">HTTP.</abbr> Multiple different representations of a single
+            resource may be available from a single <acronym class="acronym">URI</acronym>. In terms of Rails,
+            multiple different formats of a resource are available from a single controller action,
+            based on the format requested by the client. Active Resource works by specifically
+            asking the Rails application for an <abbr class="abbrev">XML</abbr> or <acronym class="acronym">JSON</acronym>
+            representation of a resource, whereas a client's browser would request the <abbr class="abbrev">HTTP</abbr> representation.</p><div class="comment_container" name="c_activeresource_id362971" id="c_activeresource_id362971"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id362971">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id363022">Another principle of <acronym class="acronym">REST</acronym> is the use of a constrained set of well
+            defined operations. In Rails the well defined set of operations are based on the
+            different <abbr class="abbrev">HTTP</abbr> verbs available. The <abbr class="abbrev">HTTP</abbr> verbs
+                <code class="literal">GET</code>, <code class="literal">POST</code>, <code class="literal">PUT</code>, and
+                <code class="literal">DELETE</code> map to the standard create, read, update, and delete
+                (<acronym class="acronym">CRUD)</acronym> operations offered by a Rails controller. Instead of
+            specifying the operation to be performed through the request <acronym class="acronym">URI</acronym> like
+                <code class="literal">show</code> in <code class="literal">/customers/show/15</code>, a <acronym class="acronym">REST</acronym>ful application would send an <abbr class="abbrev">HTTP</abbr>
+            <code class="literal">GET</code> request to the resource's member <acronym class="acronym">URI</acronym>
+            <code class="literal">/customers/15</code>. A member <acronym class="acronym">URI</acronym>, such as <code class="literal">/customers/15</code>, uniquely addresses an individual resource, whereas a
+            collection <acronym class="acronym">URI</acronym>, such as <code class="literal">/customers</code>, addresses the
+            entire set of resources. Using the <abbr class="abbrev">HTTP</abbr> verb in conjunction with the
+            resource <acronym class="acronym">URI</acronym> to specify the desired operation eliminates redundancy
+            and utilizes the well defined underlying <abbr class="abbrev">HTTP</abbr> protocol specifications. </p><div class="comment_container" name="c_activeresource_id363022" id="c_activeresource_id363022"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363022">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id363111">Active Resource relies on the server providing the appropriate <abbr class="abbrev">HTTP</abbr>
+            status code with each response. This allows Active Resource to accurately communicate
+            any failure conditions that might occur. All status codes between <code class="literal">200</code>
+            and <code class="literal">399</code> are considered successful, except for <code class="literal">301</code>
+            and <code class="literal">302</code>, which are redirects. One other exception is when the server
+            returns the <code class="literal">422 Unprocessable Entity</code> status code, which indicates
+            that validation of the resource failed. In this case, Active Resource rescues the
+            exception and parses the errors returned in the response body so that they are
+            accessible to the client code. We'll take a closer look at validation and errors later
+            in the chapter. <a class="xref" href="ch04.html#activeresource-exception-mapping" title="Table 4.1. Active Resource Exceptions">Table 4.1, “Active Resource Exceptions”</a> shows the exceptions
+            raised for each different <abbr class="abbrev">HTTP</abbr> status code.</p><div class="comment_container" name="c_activeresource_id363111" id="c_activeresource_id363111"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363111">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="table" id="activeresource-exception-mapping"><p class="title"><b>Table 4.1. Active Resource Exceptions</b></p><div class="table-contents"><table summary="Active Resource Exceptions" border="1"><colgroup><col /><col /></colgroup><thead><tr><th>HTTP Status Code</th><th>Exception</th></tr></thead><tbody><tr><td>301, 302</td><td>ActiveResource::Redirection</td></tr><tr><td>400</td><td>ActiveResource::BadRequest</td></tr><tr><td>401</td><td>ActiveResource::UnauthorizedAccess</td></tr><tr><td>403</td><td>ActiveResource::ForbiddenAccess</td></tr><tr><td>404</td><td>ActiveResource::ResourceNotFound</td></tr><tr><td>405</td><td>ActiveResource::MethodNotAllowed</td></tr><tr><td>409</td><td>ActiveResource::ResourceConflict</td></tr><tr><td>422</td><td>ActiveResource::ResourceInvalid</td></tr><tr><td>401 - 499</td><td>ActiveResource::ClientError</td></tr><tr><td>500 - 599</td><td>ActiveResource::ServerError</td></tr><tr><td>Other</td><td>ActiveResource::ConnectionError</td></tr></tbody></table></div></div><br class="table-break" /><div class="comment_container" name="c_activeresource-exception-mapping" id="c_activeresource-exception-mapping"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource-exception-mapping">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id363165">In the following sections we'll take a look at the code for the client and server, as
+            well as how they interoperate with one another. This will help to solidify your
+            understanding of Active Resource and your knowledge of how Rails uses <acronym class="acronym">REST</acronym> and <abbr class="abbrev">HTTP</abbr> protocol conventions to simplify web services.
+            For more thorough coverage of <acronym class="acronym">REST</acronym> in Rails see .</p><div class="comment_container" name="c_activeresource_id363165" id="c_activeresource_id363165"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363165">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activeresource_id363188">Client and Server</h2></div></div></div><p id="activeresource_id363193">Let's construct a client for a <acronym class="acronym">REST</acronym>ful Rails web service providing
+            customer information. The web service application will be a simple Rails application
+            consisting of a <code class="classname">CustomersController</code> and a <code class="classname">Customer</code> model. The client of the web service will be a simple Active
+            Resource client named <code class="classname">Api::Customer</code>. The overall architecture of
+            the client and server discussed in this section is shown in <a class="xref" href="ch04.html#activeresouce-architecture" title="Figure 4.1. High level overview of a RESTful Rails web service.">Figure 4.1, “High level overview of a RESTful Rails web service.”</a>.</p><div class="comment_container" name="c_activeresource_id363193" id="c_activeresource_id363193"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363193">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="figure" id="activeresouce-architecture"><p class="title"><b>Figure 4.1. High level overview of a <acronym class="acronym">REST</acronym>ful Rails web service.</b></p><div class="figure-contents"><div><img src="figs/print/active_resource_client_server.png" alt="High level overview of a RESTful Rails web service." /></div></div></div><br class="figure-break" /><div class="comment_container" name="c_activeresouce-architecture" id="c_activeresouce-architecture"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresouce-architecture">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="activeresource_id363238">Web Service Client</h3></div></div></div><p id="activeresource_id363243">Since the Active Resource client will most likely be written for someone else's
+                web service, it is unlikely that the client and server will be contained within the
+                same Rails project. You can place the code for <code class="classname">Api::Custer</code>
+                into <code class="filename">app/models/api/customer.rb</code> in a Rails application, or if
+                you are using Active Resource standalone, you can place the code anywhere you want.
+                The <code class="classname">Api::Customer</code> Active Resource model looks as follows:</p><div class="comment_container" name="c_activeresource_id363243" id="c_activeresource_id363243"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363243">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="example" id="activeresource-simple-model"><p class="title"><b>Example 4.1. Simple Active Resource model</b></p><div class="example-contents"><pre class="programlisting" id="activeresource_id363271">module Api
+  class Customer &lt; ActiveResource::Base
+    self.site = 'http://localhost:3000'
+  end
+end</pre><div class="comment_container" name="c_activeresource_id363271" id="c_activeresource_id363271"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363271">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><br class="example-break" /><div class="note"><h3 class="title">Note</h3><p id="activeresource_id363284">By default, the enclosing element of a serialized Active Resource model is the
+                    underscored class name of the model. If the name of your class and the name of
+                    the element required by the remote web service do not match up then you can
+                    change the element name with the ActiveResource::Base.<code class="methodname">element_name</code> class accessor:</p><div class="comment_container" name="c_activeresource_id363284" id="c_activeresource_id363284"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363284">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id363296"><pre class="programlisting" id="activeresource_id363298">class PersonResource &lt; ActiveResource::Base
+  self.element_name = "person"
+end</pre><div class="comment_container" name="c_activeresource_id363298" id="c_activeresource_id363298"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363298">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><p id="activeresource_id363309">The module namespace <code class="literal">Api</code> has been added to the model in order
+                to disambiguate it from the Active Record model of the same name in the web
+                service's application. This allows the discussion of each model without confusion
+                and allows for both models to exist in the same project. Having two <code class="classname">Customer</code> classes in the same project would not work because the two
+                classes would generate a <code class="classname">TypeError</code> due to a superclass
+                mismatch at runtime. Enclosing the Active Resource model within a module does not
+                have any effect on the way an Active Resource model interacts with the remote web
+                service.</p><div class="comment_container" name="c_activeresource_id363309" id="c_activeresource_id363309"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363309">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id363334">Active Resource needs to be provided with the <acronym class="acronym">URI</acronym> location of
+                the web service, which is called the <code class="literal">site</code>. You can set the
+                    <code class="literal">site</code> for all subclasses by setting <code class="methodname">ActiveResource::Base.site</code>. You can also set or override the
+                    <code class="literal">site</code> for any particular subclass by setting the <code class="literal">site</code> on the subclass. Active Resource uses the configured <code class="literal">site</code> along with conventions based on <abbr class="abbrev">REST</abbr> and the name
+                of your Active Resource model's class name to resolve the correct <acronym class="acronym">URI</acronym>s for the remote resource. Now we'll take a look at the implementation
+                of the web service itself.</p><div class="comment_container" name="c_activeresource_id363334" id="c_activeresource_id363334"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363334">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="activeresource_id363377">Web Service Server</h3></div></div></div><p id="activeresource_id363382">The web service used for the examples in this chapter is provided by a simple
+                Rails controller called <code class="classname">CustomersController</code> that conforms to
+                the Rails <acronym class="acronym">REST</acronym>ful <acronym class="acronym">URI</acronym> structure. For the sake
+                of simplicity the controller will only return <acronym class="acronym">XML</acronym> representations
+                of customer resources.</p><div class="comment_container" name="c_activeresource_id363382" id="c_activeresource_id363382"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363382">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id363404">In order for Rails to properly route requests for a resource to the proper
+                controller and action, the application needs a resource definition in <code class="filename">config/routes.rb</code>:</p><div class="comment_container" name="c_activeresource_id363404" id="c_activeresource_id363404"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363404">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id363413"><pre class="programlisting" id="activeresource_id363415">ActionController::Routing::Routes.draw do |map|  
+  map.resources :customers, :collection =&gt; { :oldest =&gt; :get, :adults =&gt; :get }
+end</pre><div class="comment_container" name="c_activeresource_id363415" id="c_activeresource_id363415"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363415">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id363426">The <code class="literal">map.resources :customers</code> call indicates that there is a
+                    <code class="classname">CustomersController</code> providing access to customer
+                resources. The call defines the standard Rails routes for the customer resource and
+                also defines two custom routes: <code class="literal">oldest</code>, and <code class="literal">adults</code>. The custom routes will be used for retrieving resources based on
+                custom <acronym class="acronym">URI</acronym>s in the next section. Both custom routes operate on
+                the collection and only accept <code class="literal">GET</code> requests. The combination of
+                    <abbr class="abbrev">HTTP</abbr> verb and request <acronym class="acronym">URI</acronym> is shown in <a class="xref" href="ch04.html#activeresource-action-mapping" title="Table 4.2. RESTful Rails HTTP to controller action mapping">Table 4.2, “RESTful Rails HTTP to controller action mapping”</a> and is also shown in the comment above
+                each controller action in <a class="xref" href="ch04.html#activeresource-restful-controller" title="Example 4.2. A simple controller providing a RESTful web service.">Example 4.2, “A simple controller providing a RESTful web service.”</a>. </p><div class="comment_container" name="c_activeresource_id363426" id="c_activeresource_id363426"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id363426">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="table" id="activeresource-action-mapping"><p class="title"><b>Table 4.2. <acronym class="acronym">REST</acronym>ful Rails HTTP to controller action mapping</b></p><div class="table-contents"><table summary="RESTful Rails HTTP to controller action mapping" border="1"><colgroup><col /><col /><col /></colgroup><thead><tr><th>HTTP Verb</th><th>Request URI</th><th>Controller Action</th></tr></thead><tfoot><tr><th colspan="3" align="left">The <code class="literal">id</code>
+                                in <acronym class="acronym">URI</acronym> would be replaced by the <abbr class="abbrev">ID</abbr> of the resource in a request.</th></tr></tfoot><tbody><tr><td><code class="literal">GET</code></td><td><code class="literal">/customers</code></td><td><code class="literal">index</code></td></tr><tr><td><code class="literal">GET</code></td><td><code class="literal">/customers/id</code></td><td><code class="literal">show</code></td></tr><tr><td><code class="literal">POST</code></td><td><code class="literal">/customers</code></td><td><code class="literal">create</code></td></tr><tr><td><code class="literal">PUT</code></td><td><code class="literal">/customers/id</code></td><td><code class="literal">update</code></td></tr><tr><td><code class="literal">DELETE</code></td><td><code class="literal">/customers/id</code></td><td><code class="literal">destroy</code></td></tr><tr><td><code class="literal">GET</code></td><td><code class="literal">/customers/oldest</code></td><td><code class="literal">oldest</code></td></tr><tr><td><code class="literal">GET</code></td><td><code class="literal">/customers/adults</code></td><td><code class="literal">adults</code></td></tr></tbody></table></div></div><br class="table-break" /><div class="comment_container" name="c_activeresource-action-mapping" id="c_activeresource-action-mapping"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource-action-mapping">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id333522"> The implementation of the controller used throughout the chapter can be seen in
+                    <a class="xref" href="ch04.html#activeresource-restful-controller" title="Example 4.2. A simple controller providing a RESTful web service.">Example 4.2, “A simple controller providing a RESTful web service.”</a>.</p><div class="comment_container" name="c_activeresource_id333522" id="c_activeresource_id333522"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id333522">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="example" id="activeresource-restful-controller"><p class="title"><b>Example 4.2. A simple controller providing a <acronym class="acronym">REST</acronym>ful web service.</b></p><div class="example-contents"><pre class="programlisting" id="activeresource_id64882">class CustomersController &lt; ApplicationController
+
+  # GET /customers.xml
+  def index
+    @customers = Customer.find(:all)
+    
+    respond_to do |format|
+      format.xml { render :xml =&gt; @customers }
+    end
+  end
+
+  # GET /customers/1.xml
+  def show
+    @customer = Customer.find(params[:id])
+    
+    respond_to do |format|
+     format.xml { render :xml =&gt; @customer }
+    end
+  end
+
+  # POST /customers.xml
+  def create
+    @customer = Customer.new(params[:customer])
+  
+    respond_to do |format|
+      if @customer.save
+        format.xml do
+          render :xml =&gt; @customer, :status =&gt; :created, :location =&gt; @customer
+        end
+      else
+        format.xml do
+          render :xml =&gt; @customer.errors, :status =&gt; :unprocessable_entity
+        end
+      end
+    end
+  end
+
+  # PUT /customers/1.xml
+  def update
+    @customer = Customer.find(params[:id])
+
+    respond_to do |format|
+      if @customer.update_attributes(params[:customer])
+        format.xml { head :ok }
+      else
+        format.xml do
+          render :xml =&gt; @customer.errors, :status =&gt; :unprocessable_entity
+        end
+      end
+    end
+  end
+
+  # DELETE /customers/1.xml
+  def destroy
+    @customer = Customer.find(params[:id])
+    @customer.destroy
+
+    respond_to do |format|
+      format.xml { head :ok }
+    end
+  end
+  
+  # GET /customers/oldest.xml
+  def oldest 
+    @customer = Customer.find(:first, :order =&gt; 'age DESC')
+    
+    respond_to do |format|
+      format.xml { render :xml =&gt; @customer }
+    end
+  end
+  
+  # GET /customers/adults.xml
+  def adults
+    @customers = Customer.find(:all, :conditions =&gt; 'age &gt;= 18')
+    
+    respond_to do |format|
+      format.xml { render :xml =&gt; @customers }
+    end
+  end
+end</pre><div class="comment_container" name="c_activeresource_id64882" id="c_activeresource_id64882"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id64882">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><br class="example-break" /><p id="activeresource_id64892">As mentioned before, the controller only returns responses in <abbr class="abbrev">XML</abbr>
+                format. Most controllers would also support other representations of the resources,
+                such as <abbr class="abbrev">HTML</abbr>, for non web service based clients. The details of the
+                responses and codes returned by each action will be explained in more details in the
+                following sections.</p><div class="comment_container" name="c_activeresource_id64892" id="c_activeresource_id64892"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id64892">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="example" id="activeresource-restful-model"><p class="title"><b>Example 4.3. Active Record <code class="literal">Customer</code> class on the server</b></p><div class="example-contents"><pre class="programlisting" id="activeresource_id348775">class Customer &lt; ActiveRecord::Base
+  validates_presence_of :name
+  validates_numericality_of :age, :greater_than =&gt; 0
+end</pre><div class="comment_container" name="c_activeresource_id348775" id="c_activeresource_id348775"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id348775">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><br class="example-break" /><p id="activeresource_id348786">The model used by the server in the examples is seen in <a class="xref" href="ch04.html#activeresource-restful-model" title="Example 4.3. Active Record Customer class on the server">Example 4.3, “Active Record Customer class on the server”</a>. The model defines a couple of
+                validations, which will be used to illustrate how validation and exceptions work
+                when using Active Resource.</p><div class="comment_container" name="c_activeresource_id348786" id="c_activeresource_id348786"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id348786">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activeresource_id348800">Reading Resources</h2></div></div></div><p id="activeresource_id348805">Active Resource reads resources by sending <code class="literal">GET</code> requests to the
+            collection or member <acronym class="acronym">URL</acronym>s of a resource. Any call to <code class="literal">find</code> that acts as a query will be sent to the collection <acronym class="acronym">URI</acronym> of the resource because the exact resource isn't yet known. Finding a
+            resource by <abbr class="abbrev">ID</abbr> sends the request to the member <acronym class="acronym">URI</acronym>
+            for the resource, since the exact desired resource is known.</p><div class="comment_container" name="c_activeresource_id348805" id="c_activeresource_id348805"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id348805">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="activeresource_id348834">Finding all resources</h3></div></div></div><p id="activeresource_id348839">Active Resource makes it easy to find:</p><div class="comment_container" name="c_activeresource_id348839" id="c_activeresource_id348839"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id348839">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id343822"><pre class="programlisting" id="activeresource_id343825">customers = Api::Customer.find(:all)</pre><div class="comment_container" name="c_activeresource_id343825" id="c_activeresource_id343825"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id343825">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id343836">Active Resource sends a <code class="literal">GET</code> request to the resource's
+                collection <acronym class="acronym">URL</acronym>:</p><div class="comment_container" name="c_activeresource_id343836" id="c_activeresource_id343836"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id343836">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id343846"><pre class="programlisting" id="activeresource_id343848">GET /customers.xml HTTP/1.1</pre><div class="comment_container" name="c_activeresource_id343848" id="c_activeresource_id343848"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id343848">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id343857">Active Resource appends <code class="literal">.xml</code> to the request path to indicate
+                that the desired response format is <abbr class="abbrev">XML</abbr>, which is the default. As
+                you can see from <a class="xref" href="ch04.html#activeresource-restful-controller" title="Example 4.2. A simple controller providing a RESTful web service.">Example 4.2, “A simple controller providing a RESTful web service.”</a>, this request
+                routes to the <code class="literal">index</code> action of the <code class="classname">CustomersController</code> on the remote web service. The <code class="literal">index</code> action returns all customers in the database serialized as <abbr class="abbrev">XML</abbr> with the <abbr class="abbrev">HTTP</abbr> status code <code class="literal">200
+                OK</code>. The response body looks as follows:</p><div class="comment_container" name="c_activeresource_id343857" id="c_activeresource_id343857"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id343857">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id323920"><pre class="programlisting" id="activeresource_id323922">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;customers type="array"&gt;
+  &lt;customer&gt;
+    &lt;age type="integer"&gt;30&lt;/age&gt;
+    &lt;id type="integer"&gt;1&lt;/id&gt;
+    &lt;name&gt;Cody&lt;/name&gt;
+  &lt;/customer&gt;
+  &lt;customer&gt;
+    &lt;age type="integer"&gt;28&lt;/age&gt;
+    &lt;id type="integer"&gt;2&lt;/id&gt;
+    &lt;name&gt;Tobi&lt;/name&gt;
+  &lt;/customer&gt;
+&lt;/customers&gt;</pre><div class="comment_container" name="c_activeresource_id323922" id="c_activeresource_id323922"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id323922">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id323933">The returned <abbr class="abbrev">XML</abbr> response is automatically mapped by Active
+                Resource into objects complete with dynamic accessors for all of the attributes of
+                the object. Inspecting the collection of customers would then look as follows:</p><div class="comment_container" name="c_activeresource_id323933" id="c_activeresource_id323933"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id323933">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id323940"><pre class="programlisting" id="activeresource_id340170">[#&lt;Api::Customer:0x1270e4c
+  @attributes={"name"=&gt;"Cody", "id"=&gt;1, "age"=&gt;30},
+  @prefix_options={}&gt;,
+ #&lt;Api::Customer:0x1270e38
+  @attributes={"name"=&gt;"Tobi", "id"=&gt;2, "age"=&gt;28},
+  @prefix_options={}&gt;]</pre><div class="comment_container" name="c_activeresource_id340170" id="c_activeresource_id340170"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id340170">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id59025">Each element in the array is an instance of the <code class="classname">Api::Customer</code> class complete with dynamically generated </p><div class="comment_container" name="c_activeresource_id59025" id="c_activeresource_id59025"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id59025">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id324528"><pre class="programlisting" id="activeresource_id324530">customer = customers.first
+customer.id   # =&gt; 1
+customer.name # =&gt; "Cody"
+customer.age  # =&gt; 30
+customer.new? # =&gt; false</pre><div class="comment_container" name="c_activeresource_id324530" id="c_activeresource_id324530"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id324530">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="activeresource_id326633">Finding a single resource by <abbr class="abbrev">ID</abbr></h3></div></div></div><p id="activeresource_id326641">The code for finding a single resource by <abbr class="abbrev">ID</abbr> is similar to
+                finding all resources:</p><div class="comment_container" name="c_activeresource_id326641" id="c_activeresource_id326641"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id326641">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id326648"><pre class="programlisting" id="activeresource_id326650">customer = Api::Customer.find(1)</pre><div class="comment_container" name="c_activeresource_id326650" id="c_activeresource_id326650"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id326650">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id326661">The <code class="literal">GET</code> request is sent to the member <acronym class="acronym">URI</acronym> of
+                the customer resource with <abbr class="abbrev">ID</abbr>
+                <code class="literal">1</code>:</p><div class="comment_container" name="c_activeresource_id326661" id="c_activeresource_id326661"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id326661">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id326678"><pre class="programlisting" id="activeresource_id326680">GET /customers/1.xml HTTP/1.1</pre><div class="comment_container" name="c_activeresource_id326680" id="c_activeresource_id326680"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id326680">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id326689">Based on <a class="xref" href="ch04.html#activeresource-action-mapping" title="Table 4.2. RESTful Rails HTTP to controller action mapping">Table 4.2, “RESTful Rails HTTP to controller action mapping”</a> you can see that the
+                request routes to <code class="literal">show</code> action of the controller. If the customer
+                exists, the server returns a successful response with a single customer serialized
+                as <abbr class="abbrev">XML</abbr>:</p><div class="comment_container" name="c_activeresource_id326689" id="c_activeresource_id326689"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id326689">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id326707"><pre class="programlisting" id="activeresource_id326709">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;customer&gt;
+  &lt;age type="integer"&gt;30&lt;/age&gt;
+  &lt;id type="integer"&gt;1&lt;/id&gt;
+  &lt;name&gt;Cody&lt;/name&gt;
+&lt;/customer&gt;</pre><div class="comment_container" name="c_activeresource_id326709" id="c_activeresource_id326709"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id326709">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id326720">If the resource cannot be found, the server will return an <abbr class="abbrev">HTTP</abbr>
+                <code class="literal">404 Not Found</code> status code. From <a class="xref" href="ch04.html#activeresource-exception-mapping" title="Table 4.1. Active Resource Exceptions">Table 4.1, “Active Resource Exceptions”</a> you can see that a <code class="literal">404</code> status code causes an <code class="classname">ActiveResource::ResourceNotFound</code> exception to be raised. An exception
+                is raised, instead of returning <code class="literal">nil</code>, because the resource is
+                being looked up by <abbr class="abbrev">ID</abbr> and is assumed to exist. The resource not
+                being found is therefore and exceptional state and an exception is raised.</p><div class="comment_container" name="c_activeresource_id326720" id="c_activeresource_id326720"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id326720">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="activeresource-custom-resource-find">Finding resources from a custom paths</h3></div></div></div><p id="activeresource_id338078">Active Resource supports finding resources from custom paths or actions that don't
+                map precisely into the standard <acronym class="acronym">REST</acronym>ful paradigm. A collection of
+                resources can be found from a custom path using the standard call to <code class="methodname">find(:all)</code> along with a custom <code class="literal">:from</code> option.
+                Here we use the custom collection path <code class="literal">adults</code> to retrieve all
+                customers over the age of 18.</p><div class="comment_container" name="c_activeresource_id338078" id="c_activeresource_id338078"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id338078">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id338101"><pre class="programlisting" id="activeresource_id338103">customers = Api::Customer.find(:all, :from =&gt; :adults)</pre><div class="comment_container" name="c_activeresource_id338103" id="c_activeresource_id338103"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id338103">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id338114">The <code class="literal">:from</code> option causes the request to be sent to the custom
+                    <code class="methodname">/customers/adults.xml</code> path of the web service instead
+                of the standard collection path <code class="literal">/customers.xml</code>. From <a class="xref" href="ch04.html#activeresource-restful-controller" title="Example 4.2. A simple controller providing a RESTful web service.">Example 4.2, “A simple controller providing a RESTful web service.”</a> you can see that the <code class="literal">adults</code> action is simply a custom query that returns a collection of
+                all customers over the age of 18.</p><div class="comment_container" name="c_activeresource_id338114" id="c_activeresource_id338114"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id338114">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id338141">Active Resource also supports finding a single resource from a custom path or
+                controller action. Here we select the oldest customer from the database by using the
+                custom <code class="literal">oldest</code> path for the customer resource:</p><div class="comment_container" name="c_activeresource_id338141" id="c_activeresource_id338141"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id338141">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id338151"><pre class="programlisting" id="activeresource_id338153">customer = Api::Customer.find(:one, :from =&gt; :oldest)</pre><div class="comment_container" name="c_activeresource_id338153" id="c_activeresource_id338153"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id338153">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id322508">Passing <code class="literal">:one</code> as the first argument to the <code class="methodname">find</code> method tells the Active Resource that the web service will only
+                be returning a single resource. The <code class="literal">:from</code> option is always
+                required when using <code class="literal">find(:one)</code>. In this case Active Resource
+                sends a <code class="literal">GET</code> request to the <code class="methodname">/customers/oldest.xml</code>, which in our case maps to the custom <code class="literal">oldest</code> action of the web service, shown in <a class="xref" href="ch04.html#activeresource-restful-controller" title="Example 4.2. A simple controller providing a RESTful web service.">Example 4.2, “A simple controller providing a RESTful web service.”</a>, that selects the oldest customer
+                in the system.</p><div class="comment_container" name="c_activeresource_id322508" id="c_activeresource_id322508"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id322508">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activeresource_id67806">Creating Resources</h2></div></div></div><p id="activeresource_id67812">Active Resource creates a resource by sending a <code class="literal">POST</code> request
+            containing the resource's attribute data to the collection <acronym class="acronym">URI</acronym> of the
+            resource. Creating a new resource looks very similar to the creation of a new record
+            using Active Record. Like with Active Record, you can either build a new object with
+                <code class="methodname">new</code> and then call <code class="methodname">save</code> on it, or
+            make a single call to <code class="methodname">create</code>.</p><div class="comment_container" name="c_activeresource_id67812" id="c_activeresource_id67812"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id67812">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="activeresource_id325480">Creating a resource</h3></div></div></div><p id="activeresource_id325485">A new resource can be created using either the <code class="methodname">create</code>
+                class method, or by building a new object and then calling <code class="methodname">save</code> on it. Here we construct a new object and then save it:</p><div class="comment_container" name="c_activeresource_id325485" id="c_activeresource_id325485"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id325485">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id325498"><pre class="programlisting" id="activeresource_id325500">customer = Api::Customer.new(:name =&gt; "Daniel", :age =&gt; 29)
+customer.save</pre><div class="comment_container" name="c_activeresource_id325500" id="c_activeresource_id325500"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id325500">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id325511">The call to <code class="methodname">save</code> causes Active Resource to serialize the
+                dynamically generated attributes of the object and send <code class="literal">POST</code> them
+                to the collection <acronym class="acronym">URI</acronym> of the resource:</p><div class="comment_container" name="c_activeresource_id325511" id="c_activeresource_id325511"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id325511">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id325527"><pre class="programlisting" id="activeresource_id325529">POST /customers.xml HTTP/1.1</pre><div class="comment_container" name="c_activeresource_id325529" id="c_activeresource_id325529"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id325529">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id317761">The request body contains the serialized customer data:</p><div class="comment_container" name="c_activeresource_id317761" id="c_activeresource_id317761"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id317761">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id317766"><pre class="programlisting" id="activeresource_id317768">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;customer&gt;
+  &lt;name&gt;Daniel&lt;/name&gt;
+  &lt;age type="integer"&gt;29&lt;/age&gt;
+&lt;/customer&gt;</pre><div class="comment_container" name="c_activeresource_id317768" id="c_activeresource_id317768"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id317768">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id317779">When the request is successful the server returns the <abbr class="abbrev">HTTP</abbr> status
+                code <code class="literal">201 Created</code>, which indicates that the resource was
+                successfully created on the server. The server also returns an <abbr class="abbrev">HTTP</abbr>
+                <code class="literal">Location</code> header containing the <acronym class="acronym">URI</acronym> location of
+                the newly created resource:</p><div class="comment_container" name="c_activeresource_id317779" id="c_activeresource_id317779"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id317779">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id327726"><pre class="programlisting" id="activeresource_id327728">Location: http://localhost/customers/3</pre><div class="comment_container" name="c_activeresource_id327728" id="c_activeresource_id327728"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id327728">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id327737">Active Resource parses the object's <abbr class="abbrev">ID</abbr> from the <code class="literal">Location</code> header of the response. Knowing the <abbr class="abbrev">ID</abbr> of the
+                resource allows the client to find, update, or delete the resource in the future by
+                sending requests to the resource's member <acronym class="acronym">URI</acronym>.</p><div class="comment_container" name="c_activeresource_id327737" id="c_activeresource_id327737"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id327737">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id327758">When creating a resource the server has the choice of whether or not return a
+                response body. It is perfectly fine to return an empty response body if there is no
+                additional information generated at the time of save that the client should know
+                about. This would be accomplished by calling render in the <code class="literal">create</code>
+                controller action as follows:</p><div class="comment_container" name="c_activeresource_id327758" id="c_activeresource_id327758"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id327758">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id329552"><pre class="programlisting" id="activeresource_id329554">render :nothing =&gt; true, :status =&gt; :created, :location =&gt; @customer</pre><div class="comment_container" name="c_activeresource_id329554" id="c_activeresource_id329554"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id329554">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id329561">However, there are many instances where attributes are set or updated at the time
+                of save. An example is when the resource has <code class="literal">created_at</code> and
+                    <code class="literal">updated_at</code> timestamp attributes that are updated at the time
+                of the save. If the server doesn't return the updated representation of the resource
+                in the response body then the Active Resource client won't know about the new or
+                changed attributes until resource is fetched again using <code class="literal">find</code> or
+                the object is reloaded with a call to <code class="literal">reload</code>.</p><div class="comment_container" name="c_activeresource_id329561" id="c_activeresource_id329561"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id329561">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id326260">In <a class="xref" href="ch04.html#activeresource-restful-controller" title="Example 4.2. A simple controller providing a RESTful web service.">Example 4.2, “A simple controller providing a RESTful web service.”</a> the controller does return
+                the customer data in the response body when the creation of the resource is
+                successful because the call to <code class="literal">render</code> is passed the <code class="literal">:xml
+                    =&gt; @customer</code> option. The response body looks as follows:</p><div class="comment_container" name="c_activeresource_id326260" id="c_activeresource_id326260"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id326260">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id323672"><pre class="programlisting" id="activeresource_id323674">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;customer&gt;
+  &lt;age type="integer"&gt;29&lt;/age&gt;
+  &lt;id type="integer"&gt;3&lt;/id&gt;
+  &lt;name&gt;Daniel&lt;/name&gt;
+&lt;/customer&gt;</pre><div class="comment_container" name="c_activeresource_id323674" id="c_activeresource_id323674"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id323674">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id317830">You can see that the customer resource now has an <code class="literal">id</code> attribute
+                that was not present in the data sent by the Active Resource client.</p><div class="comment_container" name="c_activeresource_id317830" id="c_activeresource_id317830"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id317830">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="activeresource_id317840">Validation and Errors</h3></div></div></div><p id="activeresource_id317845">The previous example showed the successful creation of a <code class="classname">Customer</code> resource, but what happens if the resource cannot be created
+                because it is not valid? Active Resource has support for parsing any server side
+                error messages that are returned by the web service into an <code class="methodname">errors</code> collection on the model. The web service is expected to return
+                an <abbr class="abbrev">HTTP</abbr>
+                <code class="literal">422 Unprocessable Entity</code> status code along with a collection of
+                error elements when validation fails. Active Resource then parses the errors out of
+                the response and return <code class="literal">false</code> from the method making the request.
+                The errors are then accessible through an <code class="literal">errors</code> collection.</p><div class="comment_container" name="c_activeresource_id317845" id="c_activeresource_id317845"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id317845">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id68098">The <code class="classname">Customer</code> model on the server, show in <a class="xref" href="ch04.html#activeresource-restful-model" title="Example 4.3. Active Record Customer class on the server">Example 4.3, “Active Record Customer class on the server”</a>, has validations to ensure that the
+                customer has a name and that the customer's age is greater than 0. Let's attempt to
+                create an invalid resource:</p><div class="comment_container" name="c_activeresource_id68098" id="c_activeresource_id68098"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id68098">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id68110"><pre class="programlisting" id="activeresource_id68113">customer = Api::Customer.new(:name =&gt; "", :age =&gt; 0)
+customer.save</pre><div class="comment_container" name="c_activeresource_id68113" id="c_activeresource_id68113"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id68113">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id68124">When the controller on the server tries to save the model the validation will
+                fail. As you can see from the <code class="literal">create</code> action in <a class="xref" href="ch04.html#activeresource-restful-controller" title="Example 4.2. A simple controller providing a RESTful web service.">Example 4.2, “A simple controller providing a RESTful web service.”</a>, the controller renders the
+                    <code class="literal">errors</code> collection of the model with the <code class="literal">:unprocessable_entity</code>
+                <abbr class="abbrev">HTTP</abbr> status code when customer cannot be saved. The <abbr class="abbrev">HTTP</abbr>
+                <code class="literal"><code class="literal">422</code> Unprocessable Entity</code> status code is used
+                by Rails to indicate that validation has failed. It is expected that the body of the
+                response will contain the errors that were generated by the request:</p><div class="comment_container" name="c_activeresource_id68124" id="c_activeresource_id68124"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id68124">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id343719"><pre class="programlisting" id="activeresource_id343721">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;errors&gt;
+  &lt;error&gt;Name can't be blank&lt;/error&gt;
+  &lt;error&gt;Age must be greater than 0&lt;/error&gt;
+&lt;/errors&gt;</pre><div class="comment_container" name="c_activeresource_id343721" id="c_activeresource_id343721"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id343721">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id343732">Rails then parses each error message and tries to associate the message with the
+                attributes of the Active Resource object at the time of the request. Any errors that
+                cannot be associated with an attribute will appear on the base object. The errors
+                can then be iterated through and interacted in similar way to Active Record errors:</p><div class="comment_container" name="c_activeresource_id343732" id="c_activeresource_id343732"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id343732">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id343742"><pre class="programlisting" id="activeresource_id343744">customer.valid?                 # =&gt; false
+customer.errors.empty?          # =&gt; false
+customer.errors.size            # =&gt; 2
+customer.errors.invalid?(:name) # =&gt; true
+customer.errors.on(:name)       # =&gt; "can't be blank"
+customer.errors.invalid?(:age)  # =&gt; true
+customer.errors.on(:age)        # =&gt; "must be greater than 0"
+customer.errors.full_messages  
+# =&gt; ["Name can't be blank", "Age must be greater than 0"]</pre><div class="comment_container" name="c_activeresource_id343744" id="c_activeresource_id343744"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id343744">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activeresource_id343757">Updating Resources</h2></div></div></div><p id="activeresource_id343762">Active Resource updates a resource by sending <code class="literal">a PUT</code> request to the
+            member <acronym class="acronym">URI</acronym> of the resource. </p><div class="comment_container" name="c_activeresource_id343762" id="c_activeresource_id343762"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id343762">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id343773">Unlike with an Active Record object, it is possible to mass assign the <code class="literal">ID</code> of an Active Resource object. This allows a client to update a resource
+            that it knows the <abbr class="abbrev">ID</abbr> of without having to first retrieve the resource
+            from the remote server.</p><div class="comment_container" name="c_activeresource_id343773" id="c_activeresource_id343773"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id343773">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id343788"><pre class="programlisting" id="activeresource_id343790">customer = Api::Customer.new(:id =&gt; 1, :age =&gt; 98)
+customer.save</pre><div class="comment_container" name="c_activeresource_id343790" id="c_activeresource_id343790"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id343790">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id343801">However, you'll probably find a resource first and then update it:</p><div class="comment_container" name="c_activeresource_id343801" id="c_activeresource_id343801"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id343801">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id320049"><pre class="programlisting" id="activeresource_id320051">customer = Api::Customer.find(1)
+customer.age = 98
+customer.save</pre><div class="comment_container" name="c_activeresource_id320051" id="c_activeresource_id320051"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id320051">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id320061">In the call to <code class="methodname">save</code> Active Resource sends a <code class="literal">PUT</code> request with the updated information for the resource to the resource's
+                <acronym class="acronym">URI</acronym>:</p><div class="comment_container" name="c_activeresource_id320061" id="c_activeresource_id320061"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id320061">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id320076"><pre class="programlisting" id="activeresource_id320078">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;customer&gt;
+  &lt;name&gt;Cody&lt;/name&gt;
+  &lt;id type="integer"&gt;1&lt;/id&gt;
+  &lt;age type="integer"&gt;98&lt;/age&gt;
+&lt;/customer&gt;</pre><div class="comment_container" name="c_activeresource_id320078" id="c_activeresource_id320078"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id320078">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id320089">If the update is successful then the server will return the <abbr class="abbrev">HTTP</abbr>
+            status code <code class="literal">200 OK</code> with an empty response body. </p><div class="comment_container" name="c_activeresource_id320089" id="c_activeresource_id320089"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id320089">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id347034">If the update to the resource fails validation then the resource will the errors
+            generated and the <abbr class="abbrev">HTTP</abbr> status code <code class="literal">422 Unprocessable
+            Entity</code>.</p><div class="comment_container" name="c_activeresource_id347034" id="c_activeresource_id347034"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id347034">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activeresource_id347047">Deleting Resource</h2></div></div></div><p id="activeresource_id347052">Active Resource deletes a resource by sending a <code class="literal">DELETE</code> request to
+            the member <acronym class="acronym">URI</acronym> of the resource. Deleting a resource can be done by
+            calling the <code class="literal">delete</code> class method of the Active Resource model with the
+                <abbr class="abbrev">ID</abbr> of the resource to be deleted:</p><div class="comment_container" name="c_activeresource_id347052" id="c_activeresource_id347052"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id347052">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id347073"><pre class="programlisting" id="activeresource_id347075">Api::Customer.delete(1)</pre><div class="comment_container" name="c_activeresource_id347075" id="c_activeresource_id347075"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id347075">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id347086">You can also call the <code class="methodname">destroy</code> method on an instance of an
+            Active Resource model:</p><div class="comment_container" name="c_activeresource_id347086" id="c_activeresource_id347086"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id347086">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id60789"><pre class="programlisting" id="activeresource_id60791">customer = Api::Customer.find(1)
+customer.destroy</pre><div class="comment_container" name="c_activeresource_id60791" id="c_activeresource_id60791"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id60791">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id60802">Either way you choose to delete the resource, the same <abbr class="abbrev">HTTP</abbr> request
+            will be made, which is a <code class="literal">DELETE</code> request to the resource's member
+                <acronym class="acronym">URI</acronym>:</p><div class="comment_container" name="c_activeresource_id60802" id="c_activeresource_id60802"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id60802">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id324059"><pre class="programlisting" id="activeresource_id61420">DELETE /customers/1.xml HTTP/1.1</pre><div class="comment_container" name="c_activeresource_id61420" id="c_activeresource_id61420"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id61420">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id61428">The <code class="literal">destroy</code> action shown in <a class="xref" href="ch04.html#activeresource-restful-controller" title="Example 4.2. A simple controller providing a RESTful web service.">Example 4.2, “A simple controller providing a RESTful web service.”</a> is the standard way of deleting a
+            record. The action returns a <code class="literal">200 Ok</code> with an empty response
+        body.</p><div class="comment_container" name="c_activeresource_id61428" id="c_activeresource_id61428"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id61428">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activeresource_id340524">Making Custom Requests</h2></div></div></div><p id="activeresource_id340529">The case may be that the standard Active Resource lifecycle methods are not sufficient
+            for calling a custom operation on a resource. Fortunately, Active Resource models are
+            able to make custom <code class="literal">GET</code>, <code class="literal">POST</code>, <code class="literal">PUT</code>, and <code class="literal">DELETE</code> requests to both member and collection
+                <acronym class="acronym">URI</acronym>s of a resource. <code class="classname">ActiveResource::Base</code>
+            is extended with both class and instance methods for each <abbr class="abbrev">HTTP</abbr> verb:
+                <code class="literal">get</code>, <code class="literal">post</code>, <code class="literal">put</code>, and
+                <code class="literal">delete</code>. </p><div class="comment_container" name="c_activeresource_id340529" id="c_activeresource_id340529"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id340529">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id331052">The custom <acronym class="acronym">URI</acronym> is formed by appending the name of the desired
+            custom action to the collection or member <acronym class="acronym">URI</acronym>. For a custom action on
+            the resource's custom collection action <code class="literal">oldest</code>: </p><div class="comment_container" name="c_activeresource_id331052" id="c_activeresource_id331052"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id331052">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id339466"><pre class="programlisting" id="activeresource_id339468">customer = Api::Customer.get(:oldest)</pre><div class="comment_container" name="c_activeresource_id339468" id="c_activeresource_id339468"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id339468">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id339479">As we already saw in <a class="xref" href="ch04.html#activeresource-custom-resource-find" title="Finding resources from a custom paths">the section called “Finding resources from a custom paths”</a>, Active
+            Resource sends an <abbr class="abbrev">HTTP</abbr>
+            <code class="literal">GET</code> request to the <code class="literal">/customers/oldest.xml</code>
+            <acronym class="acronym">URI</acronym>. The same response is returned by the web service as before,
+            however, the response is not automatically mapped to an instance of the <code class="classname">Api::Customer</code> class. Normally the response from an Active Resource
+            lifecycle method is automatically mapped to an instance, or instances, of an Active
+            Resource model, but this is not the case for custom requests. A response to a custom
+            request is converted to a hash using <code class="literal">Hash.from_xml</code>. In this case the
+            response is a single hash:</p><div class="comment_container" name="c_activeresource_id339479" id="c_activeresource_id339479"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id339479">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id339517"><pre class="programlisting" id="activeresource_id339519">{"name"=&gt;"Cody", "id"=&gt;1, "age"=&gt;30}</pre><div class="comment_container" name="c_activeresource_id339519" id="c_activeresource_id339519"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id339519">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activeresource_id339531"><abbr class="abbrev">HTTP</abbr> Authentication</h2></div></div></div><p id="activeresource_id339538">Active Resource supports <abbr class="abbrev">HTTP</abbr> basic access authentication. <abbr class="abbrev">HTTP</abbr> basic authentication allows the web service to authenticate the
+            Active Resource client based on a set of credentials with each request to the web
+            service. See <a class="xref" href="ch04.html">???</a> for more detailed information
+            on adding <abbr class="abbrev">HTTP</abbr> basic authentication to your application. Any use of
+                <abbr class="abbrev">HTTP</abbr> basic authentication needs to be performed over a secure
+                <abbr class="abbrev">SSL</abbr> connection in order to protect the credentials and data
+            transmitted.</p><div class="comment_container" name="c_activeresource_id339538" id="c_activeresource_id339538"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id339538">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id326453">Setting up the server to perform <abbr class="abbrev">HTTP</abbr> basic authentication can be as
+            simple as adding a before filter to the controller:</p><div class="comment_container" name="c_activeresource_id326453" id="c_activeresource_id326453"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id326453">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id326462"><pre class="programlisting" id="activeresource_id326464">class CustomersController &lt; ApplicationController
+  before_filter :authenticate
+
+  private
+  def authenticate
+    authenticate_or_request_with_http_basic do |user_name, password| 
+      user_name == "cody" &amp;&amp; password == "secret"
+    end
+  end
+end</pre><div class="comment_container" name="c_activeresource_id326464" id="c_activeresource_id326464"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id326464">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id319686">The controller will attempt to authenticate the user with the user name <code class="literal">cody</code> and password <code class="literal">secret</code> or return an <abbr class="abbrev">HTTP</abbr>
+            <code class="literal">401 Unauthorized</code> status code.</p><div class="comment_container" name="c_activeresource_id319686" id="c_activeresource_id319686"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id319686">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id337320">To use Active Resource with a server that uses <abbr class="abbrev">HTTP</abbr> basic
+            authentication you need to configure the credentials on the Active Resource model. As
+            with most other configuration settings, the credentials are inherited to subclasses of
+                <code class="classname">ActiveResource::Base</code>. This allows you to set the credentials
+            once on <code class="classname">ActiveResource::Base</code> or on a particular subclass.</p><div class="comment_container" name="c_activeresource_id337320" id="c_activeresource_id337320"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id337320">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activeresource_id337338">The credentials used by <abbr class="abbrev">HTTP</abbr> basic authentication are a user name and
+            a password. There are two ways to provide the user name and password to be used. The
+            first is to place the user name and password into the site using the <code class="literal">http://user:password@host:port</code> format:</p><div class="comment_container" name="c_activeresource_id337338" id="c_activeresource_id337338"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id337338">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id337352"><pre class="programlisting" id="activeresource_id337354">module Api
+  class Customer &lt; ActiveResource::Base
+    self.site = 'http://cody:secret@localhost:3000'
+  end
+end</pre><div class="comment_container" name="c_activeresource_id337354" id="c_activeresource_id337354"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id337354">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id337365">The second way is to set the <code class="methodname">user</code> and <code class="methodname">password</code> class accessors. This method is useful for code clarity, but also
+            if the user name you're using is an email address. The <code class="literal">@</code> symbol in an
+            email address will result in an invalid <acronym class="acronym">URI</acronym>. </p><div class="comment_container" name="c_activeresource_id337365" id="c_activeresource_id337365"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id337365">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activeresource_id337385"><pre class="programlisting" id="activeresource_id337387">module Api
+  class Customer &lt; ActiveResource::Base
+    self.site = 'http://localhost:3000'
+    self.user = 'cody@example.com'
+    self.password = 'secret'
+  end
+end</pre><div class="comment_container" name="c_activeresource_id337387" id="c_activeresource_id337387"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id337387">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activeresource_id337398">Once configured, Active Resource will provide the credentials to the server on each
+            request. As was shown above, the server returns an <abbr class="abbrev">HTTP</abbr>
+            <code class="literal">401 Unauthorized</code> status code when the client cannot be authenticated.
+            The <code class="literal">401 Unauthorized</code> status code causes an <code class="classname">ActiveResource::UnauthorizedAccess</code> exception to be raised in the Active
+            Resource client.</p><div class="comment_container" name="c_activeresource_id337398" id="c_activeresource_id337398"><p class="comment_count">
+          <a class="comment_count" href="ch04.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activeresource_id337398">
+
+
+        <h4><a href="ch04.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><!-- Comment form -->
+
+   <div id="comment_form_main" class="comment_form">
+
+
+<h5>You must sign in or <a href="register.html">register</a> before commenting</h5>
+
+  <form action="signin.html" method="post"><table>
+     <tr class="field">
+<td class="label" valign="top"><label>Username:</label></td>
+<td class="field" colspan="2" valign="top"><input id="username" name="username" type="text" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input name="redirect_to" type="hidden" value="http://rails-nutshell.labs.oreilly.com/ch04.html" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input name="xml_id" type="hidden" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label>Password:</label></td>
+<td class="field" colspan="2" valign="top"><input id="password" name="password" type="password" /></td>
+</tr>
+  <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input id="submit" name="submit" type="submit" value="Sign in" /></td>
+</tr>
+  </table></form>
+
+
+
+</div>
+
+
+<div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 3. Active Record </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 5. Action Mailer</td></tr></table></div><div class="footer-copyright"></div></body></html>

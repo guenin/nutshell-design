@@ -1,0 +1,1422 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="/js/jquery-1.3.2.min.js" type="text/javascript"></script>
+    
+    <script src="/js/openfeedback.js" type="text/javascript"></script>
+        
+
+    <link rel="alternate" type="application/atom+xml" title="Comments on this page" href="/comments/feed/ch07.html" />
+    <link rel="alternate" type="application/atom+xml" title="All comments on Rails in a Nutshell" href="/comments/feed?id=book" />
+
+        <title>Chapter 7. Testing</title><link rel="stylesheet" href="/css/ofps_main.css" type="text/css" /><link rel="stylesheet" href="/css/ofps_ui.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.74.3" /><link rel="home" href="index.html" title="Rails in a Nutshell" /><link rel="up" href="index.html" title="Rails in a Nutshell" /><link rel="prev" href="ch06.html" title="Chapter 6. Active Support" /><link rel="next" href="ch08.html" title="Chapter 8. Plugins" /></head><body><div class="oreilly-header"><ul><li><p><a href="http://oreilly.com/"><img alt="O'Reilly Logo" src="/oreilly-logo.jpg" /></a></p></li><li><p id="oreilly-breadcrumbs"><a href="http://labs.oreilly.com/">Labs</a> &gt; <a href="http://labs.oreilly.com/ofps.html">OFPS</a> &gt; <a href="index.html">Rails in a Nutshell</a></p></li><li><p class="login">
+
+          <a href="/signin">Sign-in</a> or 
+          <a href="/register">Register</a>
+
+            </p></li><li><p class="ofps-show-hide-all-comments"><a href="#" class="ofps-show-hide-all-comments-toggle">Show all comments</a></p></li><li><p><a href="http://labs.oreilly.com/ofps.html">Help</a></p></li></ul></div><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 7. Testing</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch06.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch08.html">Next</a></td></tr></table><hr /></div><div class="chapter" lang="en" id="testing_id64728" xml:lang="en"><div class="titlepage"><div><div><h2 class="title">Chapter 7. Testing</h2></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="testing_id66734">Introduction</h2></div></div></div><p id="testing_id363005">Testing is about asserting that certain expectations come true
+            – that code works the way you expect it to when it runs.</p><div class="comment_container" name="c_testing_id363005" id="c_testing_id363005"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id363005">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id363005b">Writing good tests mean that you’ll find yourself
+            catching more bugs, re-thinking your approach when you realize your code isn’t
+            easily testable (a red flag that maintenance down the line is going to be rough), and
+            having something to tell you that your application isn’t completely broken after
+            you’ve changed or added a feature.</p><div class="comment_container" name="c_testing_id363005b" id="c_testing_id363005b"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id363005b">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id363008">To aid you in reaching said lofty goal of testing-nirvana, Rails
+            comes with a suite of tools to get you there.</p><div class="comment_container" name="c_testing_id363008" id="c_testing_id363008"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id363008">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id363014">Let’s take a look at an example model called <code class="code">Article</code>:</p><div class="informalexample" id="testing_id363021"><pre class="programlisting" id="testing_id363023">class Article &lt; ActiveRecord::Base
+  belongs_to :author, :class_name =&gt; "User"
+  
+  named_scope :recent_articles, {:limit =&gt; 5, :order =&gt; 'created_at DESC'}
+  
+  def popular?
+    times_read &gt; 25
+  end
+end</pre><div class="comment_container" name="c_testing_id363023" id="c_testing_id363023"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id363023">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_testing_id363014" id="c_testing_id363014"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id363014">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id363030">Its matching test, <code class="code">ArticleTest</code> (kept under
+                <code class="filename">test/unit/article_test.rb</code>), looks like this:</p><div class="informalexample" id="testing_id363039"><pre class="programlisting" id="testing_id363041"># Bring in the extra helper code we created
+# in test/test_helper.rb
+require 'test_helper'
+
+# The test class (here, ArticleTest) must be in a file called
+# article_test.rb for the "rake test" tasks to run correctly
+class ArticleTest &lt; ActiveSupport::TestCase
+
+  setup do
+    # Code in here is executed before each test
+    
+    # Instance variables set here are available
+    # in all tests
+    @article = Article.new
+  end
+
+  test "#popular? true when times_read &gt; 25" do
+    
+    # This test shows the general testing pattern:
+    
+    # 1) Set up a test situation
+    @article.times_read = 100
+    
+    # 2) Assert that given the situation, some method
+    # acts the way you expect
+    assert @article.popular?
+  end
+  
+  # Another test for an alternative situation
+  test "#popular? false when times_read &lt; 25" do
+    @article.times_read = 0
+    assert !@article.popular?
+  end
+end</pre><div class="comment_container" name="c_testing_id363041" id="c_testing_id363041"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id363041">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_testing_id363030" id="c_testing_id363030"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id363030">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id363079">Each model has its behaviour tested by a corresponding test
+            class. Each test class is composed of test methods, defined by using the <code class="code">test</code> method with a descriptive string and a block of test code. Each test method
+            contains assertions, which defines a conditions or expected results that must be met for
+            the test to pass.</p><div class="comment_container" name="c_testing_id363079" id="c_testing_id363079"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id363079">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id363092">Note that all tests must have a class-name that ends with
+                “<span class="bold"><strong>Test</strong></span>”, as in Something<span class="bold"><strong>Test</strong></span> or FooBar<span class="bold"><strong>Test</strong></span> and that
+            their containing filename must match it in snake_case format (e.g. <code class="code">ArticleTest</code> goes in <code class="filename">article_test.rb</code>).</p><div class="comment_container" name="c_testing_id363092" id="c_testing_id363092"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id363092">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id363112">When running <code class="filename">article_test.rb</code>, each test
+            method in each <code class="code">TestCase</code> class is executed. When an assertion fails, the
+            containing method stops executing and an error message is displayed. The rest of the
+            test method won’t be executed, but the rest of the test methods in the class will.</p><div class="comment_container" name="c_testing_id363112" id="c_testing_id363112"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id363112">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id363125">Here’s an example of the tests in <code class="code">article_test.rb</code> failing:</p><div class="informalexample" id="testing_id363122"><pre class="programlisting" id="testing_id325857">$ rake test:units
+Loaded suite /Library/Ruby/Gems/1.8/gems/rake-0.8.7/lib/rake/rake_test_loader
+Started
+..EE.
+Finished in 0.089226 seconds.
+
+  1) Error:
+test_#popular?_should_be_false_when_times_read_&lt;_25(ArticleTest):
+ActiveRecord::UnknownAttributeError: unknown attribute: times_read
+    /test/unit/article_test.rb:11:in `new'
+    /test/unit/article_test.rb:11:in `test_#popular?_should_be_false_when_times_read_&lt;_25'
+
+  2) Error:
+test_#popular?_should_be_true_when_times_read_&gt;_25(ArticleTest):
+ActiveRecord::UnknownAttributeError: unknown attribute: times_read
+    /test/unit/article_test.rb:6:in `new'
+    /test/unit/article_test.rb:6:in `test_#popular?_should_be_true_when_times_read_&gt;_25'
+
+5 tests, 4 assertions, 0 failures, 2 errors</pre><div class="comment_container" name="c_testing_id325857" id="c_testing_id325857"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id325857">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p>Looks like we’ve forgotten to add a <code class="code">times_read</code>
+            field to the <code class="code">articles</code> table. Oops.</p><div class="comment_container" name="c_testing_id363125" id="c_testing_id363125"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id363125">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id325874">
+            </p><div class="note"><h3 class="title">Note</h3><p id="testing_id335967">Earlier versions of Rails test methods looked slightly
+                    different, but did the same thing: </p><div class="informalexample" id="testing_id335971"><pre class="programlisting" id="testing_id335973"># Older style
+def test_article_without_a_title_should_be_invalid
+  article = Article.new
+  assert article.title.blank?
+  assert !article.valid?
+end
+</pre><div class="comment_container" name="c_testing_id335973" id="c_testing_id335973"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335973">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_testing_id335967" id="c_testing_id335967"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335967">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p>
+        </p><div class="comment_container" name="c_testing_id325874" id="c_testing_id325874"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id325874">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="testing_id335987">The lay of the land</h2></div></div></div><p id="testing_id335993">Typical Rails tests come in the follow forms: </p><div class="variablelist"><dl><dt id="testing_id97587"><span class="term">Unit (Model)</span></dt><dd><p id="testing_id344822">These test business logic in your models. A
+                            well-written Rails application should have the bulk of its code in its
+                            models, so the bulk of your tests should be these.</p></dd><div class="comment_container" name="c_testing_id97587" id="c_testing_id97587"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id97587">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id111190"><span class="term">Functional (Controller)</span></dt><dd><p id="testing_id344468">These test individual controller actions in
+                            isolation.</p></dd><div class="comment_container" name="c_testing_id111190" id="c_testing_id111190"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id111190">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id92712"><span class="term">Integration (Controller to Controller)</span></dt><dd><p id="testing_id344483">These test state mutations between/over multiple
+                            actions and routing, <span class="italic">i.e.</span> ensuring
+                            that things don’t totally explode as a user clicks through a
+                            typical work flow.</p></dd><div class="comment_container" name="c_testing_id92712" id="c_testing_id92712"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id92712">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id100796"><span class="term">Fixtures</span></dt><dd><p id="testing_id344507">Used to hold example model data used to easily
+                            instantiate those models in tests, avoiding the tedious process of
+                            manually creating model objects.</p></dd><div class="comment_container" name="c_testing_id100796" id="c_testing_id100796"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id100796">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id106809"><span class="term">Unit/Helpers</span></dt><dd><p id="testing_id344523">These test helpers used in views.</p></dd><div class="comment_container" name="c_testing_id106809" id="c_testing_id106809"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id106809">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div><p>In other words, the basic relationships look like this: </p><table id="testing_id111068" frame="void"><tbody><tr>
+                        <td rowspan="1" colspan="1">Model</td>
+                        <td rowspan="1" colspan="1">Unit Test</td>
+                    </tr><tr>
+                        <td rowspan="1" colspan="1">Controller</td>
+                        <td rowspan="1" colspan="1">Functional Test</td>
+                    </tr><tr>
+                        <td rowspan="1" colspan="1">View</td>
+                        <td rowspan="1" colspan="1">(as part of a) Functional Test</td>
+                    </tr><tr>
+                        <td rowspan="1" colspan="1">Controller to Controller</td>
+                        <td rowspan="1" colspan="1">Integration Test</td>
+                    </tr></tbody></table><div class="comment_container" name="c_testing_id335993" id="c_testing_id335993"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335993">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="note"><h3 class="title">Note</h3><p id="testing_id97450">Unit tests are also used for testing non-Model code (like classes you might put
+                under /lib) that don’t fall under any of these Model/View/Controller
+            categories.</p><div class="comment_container" name="c_testing_id97450" id="c_testing_id97450"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id97450">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="testing_id344538">If you used a Rails generator to create a model, controller or
+            resource (<span class="italic">i.e.</span> both together), you’ll find that
+            Rails also generated a matching set of tests: </p><div class="informalexample" id="testing_id329030"><pre class="programlisting" id="testing_id329032">$ script/generate resource Article
+      create  app/models/
+      create  app/controllers/
+      create  app/helpers/
+      create  app/views/articles
+      create  test/functional/
+      create  test/unit/
+      create  test/unit/helpers/
+  dependency  model
+      exists    app/models/
+      exists    test/unit/
+      create    test/fixtures/
+      create    app/models/article.rb
+      create    test/unit/article_test.rb
+      create    test/fixtures/articles.yml
+      create    db/migrate
+      create    db/migrate/20090709151428_create_articles.rb
+      create  app/controllers/articles_controller.rb
+      create  test/functional/articles_controller_test.rb
+      create  app/helpers/articles_helper.rb
+      create  test/unit/helpers/articles_helper_test.rb
+       route  map.resources :articles</pre><div class="comment_container" name="c_testing_id329032" id="c_testing_id329032"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id329032">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_testing_id344538" id="c_testing_id344538"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id344538">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id329041">The above says that three test suite files and a fixture were
+            created for us:</p><div class="itemizedlist" id="testing_id329043"><ul><li><p id="testing_id66198">
+                        <code class="code">test/unit/article_test.rb</code>
+                    </p><div class="comment_container" name="c_testing_id66198" id="c_testing_id66198"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id66198">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="testing_id335001">
+                        <code class="code">test/fixtures/articles.yml</code>
+                    </p><div class="comment_container" name="c_testing_id335001" id="c_testing_id335001"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335001">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="testing_id335010">
+                        <code class="code">test/functional/articles_controller_test.rb</code>
+                    </p><div class="comment_container" name="c_testing_id335010" id="c_testing_id335010"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335010">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="testing_id335021">
+                        <code class="code">test/unit/helpers/articles_helper_test.rb</code>
+                    </p><div class="comment_container" name="c_testing_id335021" id="c_testing_id335021"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335021">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li></ul></div><p> Not generated here are integration tests, which span multiple controller
+            actions. </p><div class="comment_container" name="c_testing_id329041" id="c_testing_id329041"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id329041">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="testing_id335051">Unit Tests</h2></div></div></div><p id="testing_id332981">Unit tests verify logic and behavior defined in your models by
+            evaluating them in isolation, without the overhead of controllers, views, or sessions.
+            These tests are the foundation of your test suite.</p><div class="comment_container" name="c_testing_id332981" id="c_testing_id332981"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id332981">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="testing_id332988">Assertions</h3></div></div></div><p id="testing_id68251">There are the essential assertions you’ll be using in your
+                test methods:</p><div class="comment_container" name="c_testing_id68251" id="c_testing_id68251"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id68251">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title" id="testing_id68276">Common assertions</h4></div></div></div><div class="variablelist"><dl><dt id="testing_id108248"><span class="term"><code class="literal">assert(boolean, message = "")</code></span></dt><dd><p id="testing_id59273">Passes when <em class="parameter"><code>boolean</code></em> is
+                                true. Displays <em class="parameter"><code>message</code></em> on failure or
+                                    "<em class="parameter"><code>boolean</code></em> is not true." </p><div class="informalexample" id="testing_id112426"><pre class="programlisting" id="testing_id114891">assert @article.popular?</pre></div></dd><div class="comment_container" name="c_testing_id108248" id="c_testing_id108248"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id108248">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id110722"><span class="term"><code class="literal">assert_nil(obj, message = "")</code></span></dt><dd><p id="testing_id67884">Passes when <em class="parameter"><code>obj</code></em> is
+                                nil. </p><div class="informalexample" id="testing_id111618"><pre class="programlisting" id="testing_id89880">assert_nil @article.editor, "no editor expected"</pre></div></dd><div class="comment_container" name="c_testing_id110722" id="c_testing_id110722"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id110722">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id112675"><span class="term"><code class="literal">assert_equal(expected, actual, message = "")</code></span></dt><dd><p id="testing_id67905">Passes when <em class="parameter"><code>expected</code></em>
+                                == <em class="parameter"><code>actual</code></em>. </p><div class="informalexample" id="testing_id104904"><pre class="programlisting" id="testing_id85638">assert_equal expected_readers, @article.readers</pre></div></dd><div class="comment_container" name="c_testing_id112675" id="c_testing_id112675"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id112675">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id93144"><span class="term"><code class="literal">assert_not_equal(expected, actual, message = "")</code></span></dt><dd><p id="testing_id116110">Passes when <em class="parameter"><code>expected</code></em> != <em class="parameter"><code>actual</code></em>. </p><div class="informalexample" id="testing_id118314"><pre class="programlisting" id="testing_id103536">assert_not_equal @different_article.readers, @article.readers</pre></div></dd><div class="comment_container" name="c_testing_id93144" id="c_testing_id93144"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id93144">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id84613"><span class="term"><code class="literal">assert_match(pattern, string, message = "")</code></span></dt><dd><p id="testing_id67929">Passes when <em class="parameter"><code>string</code></em>
+                                matches the regular expression <em class="parameter"><code>pattern</code></em>.
+                                    </p><div class="informalexample" id="testing_id113587"><pre class="programlisting" id="testing_id100758">assert_match(/edward/i, @article.author)</pre></div></dd><div class="comment_container" name="c_testing_id84613" id="c_testing_id84613"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id84613">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id103016"><span class="term"><code class="literal">assert_no_match(pattern, string, message = "")</code></span></dt><dd><p id="testing_id93491">Passes when <em class="parameter"><code>string</code></em> does not match the
+                                regular expression <em class="parameter"><code>pattern</code></em>. </p><div class="informalexample" id="testing_id86460"><pre class="programlisting" id="testing_id92157">assert_no_match(/bill/, @article.author)</pre></div></dd><div class="comment_container" name="c_testing_id103016" id="c_testing_id103016"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id103016">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id109720"><span class="term"><code class="literal">assert_in_delta(expected_float, actual_float, delta, message
+                                = "")</code></span></dt><dd><p id="testing_id66320">Passes when <em class="parameter"><code>expected_float</code></em> and <em class="parameter"><code>actual_float</code></em>
+                                are no further apart than <em class="parameter"><code>delta</code></em>.
+                                    </p><div class="informalexample" id="testing_id103900"><pre class="programlisting" id="testing_id96404">assert_in_delta @comment.spamminess, (5.0/3.0), 0.2</pre></div></dd><div class="comment_container" name="c_testing_id109720" id="c_testing_id109720"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id109720">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id103817"><span class="term"><code class="literal">assert_raise(expectation, ...) { block }</code></span></dt><dd><p id="testing_id326892">Passes when the block raises one of the
+                                supplied exceptions. </p><div class="informalexample" id="testing_id91863"><pre class="programlisting" id="testing_id85229">assert_raise TooAwesomeException do
+  Article.create(:title =&gt; "Vampire Sharks With Bears for Arms")
+end</pre></div></dd><div class="comment_container" name="c_testing_id103817" id="c_testing_id103817"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id103817">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id116661"><span class="term"><code class="literal">assert_nothing_raised(expection, ...) { block }</code></span></dt><dd><p id="testing_id96341">Passes when the block does not raise one of the supplied
+                                exceptions. </p><div class="informalexample" id="testing_id90469"><pre class="programlisting" id="testing_id113727">assert_nothing_raised do
+  @boring_story.destroy
+end</pre></div></dd><div class="comment_container" name="c_testing_id116661" id="c_testing_id116661"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id116661">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id118168"><span class="term"><code class="literal">assert_difference(expression, difference = 1, message = nil)
+                                { block }</code></span></dt><dd><p id="testing_id326909">Takes a Ruby expression as a <code class="literal">String</code> or an <code class="literal">Array</code> of expressions and
+                                passes when the value returned by the expression before and after
+                                the block changes by <em class="parameter"><code>difference</code></em>.
+                                    </p><div class="informalexample" id="testing_id101714"><pre class="programlisting" id="testing_id118239">assert_difference 'Article.count' do
+  post :create, :article =&gt; valid_params
+end
+
+assert_difference 'Article.count', -1 do
+  post :delete, :id =&gt; @boring_article.id
+end
+
+assert_difference ['Article.count', 'AdSpace.count'], +2 do
+  post :create, :article =&gt; valid_params
+end</pre></div></dd><div class="comment_container" name="c_testing_id118168" id="c_testing_id118168"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id118168">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div><p id="testing_id106822">Look up the <code class="literal">Test::Unit::Assertions</code> module (included in
+                    Ruby’s standard library) for more assertions available for use in Unit
+                Tests.</p><div class="comment_container" name="c_testing_id106822" id="c_testing_id106822"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id106822">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="testing_id320309">Test Helper Methods</h3></div></div></div><p id="testing_id320314">Writing custom assertions (<span class="italic">e.g.</span> to encapsulate several common assertions in one) and helper methods
+                    (<span class="italic">e.g.</span> to execute a complex login process with
+                a single call needed to set up an assertion) keeps your tests readable, small, and
+                DRY. The place to keep those custom assertions and helper methods is in <code class="filename">test/test_helper.rb</code>, loaded before any test is run.</p><div class="comment_container" name="c_testing_id320314" id="c_testing_id320314"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id320314">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id320265">Here’s an example of adding a custom assertion for
+                testing the size of collections. Add this to <code class="filename">test/test_helper.rb</code>:</p><div class="comment_container" name="c_testing_id320265" id="c_testing_id320265"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id320265">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><pre class="programlisting" id="testing_id61423">class ActiveSupport::TestCase
+  def assert_size(collection, size, message = nil)
+    message ||= "expected #{collection.inspect} to have #{size} elements but instead had #{collection.size}"
+    assert_block message do
+      collection.size == size
+    end
+  end
+end</pre><div class="comment_container" name="c_testing_id61423" id="c_testing_id61423"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id61423">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id61431">With that code in place, the <code class="code">assert_size</code> is now
+                available in all our unit, functional, and integration tests:</p><div class="comment_container" name="c_testing_id61431" id="c_testing_id61431"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id61431">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><pre class="programlisting" id="testing_id339152">require 'test_helper'
+class ArrayTest &lt; ActiveSupport::TestCase
+  test "array length" do
+    assert_size [1,2,3], 3
+  end
+  
+  test "Article.recent_articles should only return 5 records" do
+    assert_size Article.recent_articles, 5
+  end
+end</pre><div class="comment_container" name="c_testing_id339152" id="c_testing_id339152"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id339152">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="testing_id339162">Fixtures</h3></div></div></div><p id="testing_id339168">Preparing and populating model data in each test is
+                difficult to refactor, prone to mistakes, and overall, a giant pain. Rails’
+                built-in answer is the concept of fixtures – files that hold model data in a
+                human-readable format called <acronym class="acronym">YAML</acronym>. When these fixtures are used
+                in a test, out come ActiveRecord objects from the test database, just like if we had
+                generated the objects manually.</p><div class="comment_container" name="c_testing_id339168" id="c_testing_id339168"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id339168">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id339179">Before each test is run, the test database is emptied, then
+                loaded with data defined in each model’s respective fixture.</p><div class="comment_container" name="c_testing_id339179" id="c_testing_id339179"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id339179">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id339171">Each record is defined using a sensible name, and the
+                attributes you wish to load into the database. </p><div class="comment_container" name="c_testing_id339171" id="c_testing_id339171"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id339171">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id339190">An example <code class="code">User</code> model fixture (found in
+                    <code class="filename">test/fixtures/users.yml</code>) where two users, <code class="code">admin</code> and <code class="code">bob</code>, are defined looks like
+                this:</p><pre class="programlisting" id="testing_id339206">admin:
+  login: admin
+  password: secret
+  adminstrator: true
+
+bob:
+  login: bobby
+  password: password
+</pre><div class="comment_container" name="c_testing_id339206" id="c_testing_id339206"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id339206">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p>
+                Note that any attributes not provides in the fixture will use the defaults defined
+                in the database schema. </p><div class="comment_container" name="c_testing_id339190" id="c_testing_id339190"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id339190">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title" id="testing_id339219">Using fixtures in tests</h4></div></div></div><p id="testing_id339225">A fixture record is referred to in a test by calling
+                        <code class="code">name_of_fixture(:name_of_fixture_record)</code> – each of these
+                    methods return a corresponding ActiveRecord object loaded with the defined
+                    fixture data. (These methods named after the fixture files are dynamically
+                    generated by Rails at runtime.)</p><div class="comment_container" name="c_testing_id339225" id="c_testing_id339225"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id339225">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id339233">Here’s an example of using the <code class="code">User</code>
+                    fixture in a test where we load <code class="code">admin</code> to set the stage for one
+                    situation and <code class="code">bob</code> for another:</p><div class="comment_container" name="c_testing_id339233" id="c_testing_id339233"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id339233">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><pre class="programlisting" id="testing_id339250">require 'test_helper'
+
+class UserTest &lt; ActiveSupport::TestCase
+  
+  test "adminstrators should be able to delete articles" do
+    assert users(:admin).delete_article( articles(:ruby_wins) )
+  end
+  
+  test "regular users should not be able to delete articles" do
+    assert !users(:bob).delete_article( articles(:ruby_wins) )
+  end
+  
+end</pre><div class="comment_container" name="c_testing_id339250" id="c_testing_id339250"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id339250">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id339259">You could write a test that was functionally equivalent
+                    using normal ActiveRecord finders like <code class="code">User.find(1)</code> and <code class="code">Article.find(3)</code>, the resulting code would be much less readable.
+                    Good tests read like a story, and naming fixtures appropriately is a big part of
+                    that. Avoid generic fixture names like <code class="code">:first</code> or <code class="code">:one</code>,
+                    and never use ActiveRecord finders with hard-coded IDs like <code class="code">Article.find(3)</code> in your tests.</p><div class="comment_container" name="c_testing_id339259" id="c_testing_id339259"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id339259">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="warning"><h3 class="title">Warning</h3><p id="testing_id338572">Fixtures are loaded directly into your test
+                        database, bypassing any validations you may have defined in your models, so
+                        it’s easy to accidentally populate your database with invalid model
+                        data.</p><div class="comment_container" name="c_testing_id338572" id="c_testing_id338572"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id338572">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id338578">It’s tempting to take advantage of this
+                        “feature” to define invalid fixtures for testing validations,
+                        but <span class="bold"><strong>don’t do it</strong></span>. Because your
+                        fixtures are shared between your unit, functional, and integration tests, an
+                        invalid fixture will likely break something down the line. If you’re
+                        going to test validations, do something like this:</p><div class="informalexample" id="testing_id67780"><pre class="programlisting" id="testing_id67782">test "all users should have a login" do
+  user = users(:bob)
+  user.login = nil
+  assert !user.valid?
+
+  user.login = "validLoginName"
+  assert user.valid?
+end</pre><div class="comment_container" name="c_testing_id67782" id="c_testing_id67782"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id67782">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_testing_id338578" id="c_testing_id338578"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id338578">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id67790">Unit testing should reveal bugs in your code, not
+                        your test data. Unless you're designing an app that expects to find bad data
+                        in the database, just don't do it.</p><div class="comment_container" name="c_testing_id67790" id="c_testing_id67790"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id67790">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title" id="testing_id68659">Defining relationships between fixtures</h4></div></div></div><p id="testing_id68665">Giving your fixtures sensible names pays off again when
+                    you have define associations between your fixtures. You could define all the
+                        <code class="code">id</code>s manually. This example sets up an <code class="code">Article</code>
+                    authored by <code class="code">User</code>
+                    <code class="code">bob</code> by specifying what the <code class="code">id</code>s should be in the
+                    database:</p><div class="comment_container" name="c_testing_id68665" id="c_testing_id68665"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id68665">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><pre class="programlisting" id="testing_id59080">bob:
+  id: 2
+  login: bobby
+  password: password</pre><div class="comment_container" name="c_testing_id59080" id="c_testing_id59080"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id59080">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><pre class="programlisting" id="testing_id337794">ruby_wins:
+  id: 3
+  author_id: 2
+  title: World's only remaining Java programmer finally learns Ruby
+</pre><div class="comment_container" name="c_testing_id337794" id="c_testing_id337794"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id337794">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id337804">Juggling all those identical looking <code class="code">id</code>s
+                    gets confusing fast. Thankfully, you can omit those <code class="code">id</code> attributes
+                    and just use the names of the associations and fixtures:</p><div class="comment_container" name="c_testing_id337804" id="c_testing_id337804"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id337804">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><pre class="programlisting" id="testing_id337818">bob:
+  login: bobby
+  password: password</pre><div class="comment_container" name="c_testing_id337818" id="c_testing_id337818"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id337818">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><pre class="programlisting" id="testing_id317758">the_final_countdown:
+  author: bob
+  title: World's ultimate heroes all clash in the most epic battle ever.
+</pre><div class="comment_container" name="c_testing_id317758" id="c_testing_id317758"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id317758">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="note"><h3 class="title">Note</h3><p id="testing_id317770">Notice that the <code class="code">id</code> attribute was
+                        ommitted from both of the records. Rails uses the name of the fixture to
+                        automatically generate the <code class="code">id</code> for you. This is great for
+                        performance, but it does mean that you cannot refer to the fixture by name
+                        if you defined the <code class="code">id</code> manually as it tends to be different for
+                        every test run.</p><div class="comment_container" name="c_testing_id317770" id="c_testing_id317770"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id317770">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title" id="testing_id317792">Factories: a fixture alternative</h4></div></div></div><p id="testing_id59566">While fixtures are great for managing small sets of
+                    sample test-data, they often grow unwieldy as a project scales in size. If I add
+                    Bob to the best-sellers group, will other tests start to break? What if I add
+                    another user, changing the total count? It’s hard to know exactly where
+                    and how a fixture is being used, so making changes can have vast unintented
+                    consequences. Things get even scarier when you remember that Rails will happily
+                    load invalid fixtures into your database. Something as simple as a new
+                    validation can break tons of tests in other parts of your app.</p><div class="comment_container" name="c_testing_id59566" id="c_testing_id59566"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id59566">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id59569">Model factories like Pat Nakajima’s Fixjour and
+                    Thoughtbot's Factory Girl alleviate issues you’ll run into with fixtures
+                    as your project grows. Their approaches typically involve giving you methods for
+                    each of your models to </p><div class="itemizedlist" id="testing_id59572"><ul><li><p id="testing_id332835">Get a hash of valid attributes</p><div class="comment_container" name="c_testing_id332835" id="c_testing_id332835"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id332835">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="testing_id332841">Instantiate a new valid model object</p><div class="comment_container" name="c_testing_id332841" id="c_testing_id332841"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id332841">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="testing_id332848">Create a valid model and save it to the
+                                database</p><div class="comment_container" name="c_testing_id332848" id="c_testing_id332848"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id332848">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li></ul></div><p>With these available, you’ll run into fewer problems due to
+                    your model objects being invalid without you knowing.</p><div class="comment_container" name="c_testing_id59569" id="c_testing_id59569"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id59569">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id344672">Another problem with named fixtures is that it’s
+                    easy to create those named like <code class="code">user_who_likes_donuts_but_not_cake</code>,
+                    where not only is the fixture name really long in order to be descriptive, but
+                    the fixture doesn’t actually represent that situation, or does, but also
+                    has other special characteristics that have been added for a corner case. These
+                    disingenuous fixture names lead to all sorts of bad surprises that eat into your
+                    development time.</p><div class="comment_container" name="c_testing_id344672" id="c_testing_id344672"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id344672">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id344685">Factories avoid these situations by encouraging the test
+                    code to be explicit in defining the constructed model. While it involves more
+                    code up front (<span class="italic">i.e.</span>
+                    <code class="code">create_user(:admin =&gt; true)</code> instead of <code class="code">admin_user</code>),
+                    the intent is more evident, and could also suggest that we’re really just
+                    missing an Admin class that inherits from User.</p><div class="comment_container" name="c_testing_id344685" id="c_testing_id344685"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id344685">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id344683">More explicit details on how to set up and use these
+                    popular factory gems are available on the web.</p><div class="comment_container" name="c_testing_id344683" id="c_testing_id344683"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id344683">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="testing_id335153">Functional Tests</h2></div></div></div><p id="testing_id335158">Functional tests assert expectations of controller actions and
+            their responses, typically generated by their corresponding views. An example functional
+            test for <code class="code">ArticleController</code> looks like this:</p><div class="informalexample" id="testing_id335167"><pre class="programlisting" id="testing_id335169">require 'test_helper'
+
+class ArticlesControllerTest &lt; ActionController::TestCase
+  setup do
+    
+    # Prepare an object/context for testing
+    @article = Article.find(:all)
+  end
+  
+  test "#show fetches the @article" do
+    
+    # Make a GET/PUT/POST/DELETE with that object
+    # that corresponds to an action
+    get 'show', :article_id =&gt; @article.id
+    assert_response :ok
+    
+    # fetch the variable stored in the controller
+    # called @banner
+    banner = assigns('banner')
+    assert banner
+  end
+  
+  test "#index fetches articles" do
+    get 'index'
+    assert_equal Article.find(:all), assigns(:articles)
+  end
+end</pre><div class="comment_container" name="c_testing_id335169" id="c_testing_id335169"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335169">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_testing_id335158" id="c_testing_id335158"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335158">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id335180">Note that the controller being tested is inferred from the test
+            class’ name: <code class="code">ArticleControllerTest</code> will implicitly test the <code class="code">ArticleController</code> class (<span class="italic">i.e.</span>
+            <code class="code">get</code> calls and the like will be aimed at it). </p><div class="comment_container" name="c_testing_id335180" id="c_testing_id335180"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335180">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id335202">To set the controller specifically, use the <code class="code">tests</code>
+            statement in your test: </p><div class="informalexample" id="testing_id335209"><pre class="programlisting" id="testing_id335212">require 'test_helper'
+
+class SomeOtherControllerTest &lt; ActionController::TestCase
+  tests ArticlesController
+end</pre><div class="comment_container" name="c_testing_id335212" id="c_testing_id335212"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335212">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_testing_id335202" id="c_testing_id335202"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335202">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id335237">Special variables available in functional tests include:
+                </p><div class="variablelist" id="testing_id335240"><dl><dt id="testing_id112269"><span class="term"><code class="literal">@controller</code></span></dt><dd><p id="testing_id87908">The controller the test is about</p></dd><div class="comment_container" name="c_testing_id112269" id="c_testing_id112269"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id112269">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id112271"><span class="term"><code class="literal">@request</code></span></dt><dd><p id="testing_id84582">The request just made to the controller being tested (accessible only
+                            after a request has been issued though a <code class="literal">get</code> call or
+                            similar)</p></dd><div class="comment_container" name="c_testing_id112271" id="c_testing_id112271"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id112271">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id100018"><span class="term"><code class="literal">@response</code></span></dt><dd><p id="testing_id115028">The response from the controller. This huge object (take a look for
+                            yourself with a <code class="code">puts @response.inspect</code>) has a reference to
+                            anything you ever wanted to know about the results of the request that
+                            just happened. Particularly useful bits include <code class="code">@response.body</code> and <code class="code">@response.headers</code>.</p></dd><div class="comment_container" name="c_testing_id100018" id="c_testing_id100018"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id100018">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div><div class="comment_container" name="c_testing_id335237" id="c_testing_id335237"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335237">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id335272">Testing internal controller state is generally done using the
+            assertions mentioned previously in Unit Testing, and the following methods and special
+            assertions: </p><div class="variablelist"><dl><dt id="testing_id99621"><span class="term"><code class="literal">assigns(<em class="parameter"><code>key</code></em>)</code></span></dt><dd><p id="testing_id109232">Used to access instance variables set in the tested controller action.
+                            (Note that it’s the only method of the bunch; the rest work like
+                                <code class="literal">Hash</code>es.)</p><p id="testing_id104019">
+                            </p><pre class="programlisting" id="testing_id103032"># Expects @article.title to be set in the controller
+# 
+#   Note that assigns takes only Strings, unlike the others
+#   which can use either symbols or Strings when naming 
+#   the controller instance variable they return.
+
+assert_equal expected_title, assigns('article').title</pre><p>
+                        </p></dd><div class="comment_container" name="c_testing_id99621" id="c_testing_id99621"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id99621">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id96558"><span class="term"><code class="literal">session</code></span></dt><dd><p id="testing_id100232">Used to access the <code class="literal">session</code> in the tested controller
+                            action.</p><pre class="programlisting" id="testing_id107720"># Asserts that there’s a user id set in the session
+assert session['user_id']</pre></dd><div class="comment_container" name="c_testing_id96558" id="c_testing_id96558"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id96558">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id92026"><span class="term"><code class="literal">flash</code></span></dt><dd><p id="testing_id99484">Used to access the <code class="literal">flash</code> in the tested controller
+                            action.</p><pre class="programlisting" id="testing_id101452"># Assert that the flash contains meaningful feedback
+assert_match /account updated/, flash['info']</pre></dd><div class="comment_container" name="c_testing_id92026" id="c_testing_id92026"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id92026">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id104385"><span class="term"><code class="literal">cookies</code></span></dt><dd><p id="testing_id82632">Used to access the <code class="literal">cookies</code> in the tested controller
+                            action.</p><pre class="programlisting" id="testing_id80349">assert_equal expected_favourite_colour, cookies['favourite_colour']</pre></dd><div class="comment_container" name="c_testing_id104385" id="c_testing_id104385"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id104385">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id119779"><span class="term"><code class="literal">request</code></span></dt><dd><p id="testing_id119789">Used to access the last <code class="literal">request</code> made in the tested
+                            controller action. (So be sure to have made a <code class="literal">get</code> or
+                            similar action before you try to access the <code class="literal">request</code>.)</p><pre class="programlisting" id="testing_id119809">assert_match /zombies or pirates/, @request[:thoughts_on]</pre></dd><div class="comment_container" name="c_testing_id119779" id="c_testing_id119779"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id119779">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id119823"><span class="term"><code class="literal">response</code></span></dt><dd><p id="testing_id119833">Used to access the last <code class="literal">response</code> returned by the
+                            tested controller action. (Just like <code class="literal">request</code>, make
+                            sure to make a <code class="literal">get</code> or similar action
+                            beforehand.)</p><pre class="programlisting" id="testing_id119854">assert_match /I like turtles/, @response.body</pre></dd><div class="comment_container" name="c_testing_id119823" id="c_testing_id119823"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id119823">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div><p>Functional test-specific assertions you can use include </p><div class="variablelist"><dl><dt id="testing_id119872"><span class="term"><code class="literal">assert_response(<em class="parameter"><code>type</code></em>, <em class="parameter"><code>[<span class="optional">message</span>]</code></em>)</code></span></dt><dd><p id="testing_id119894">Asserts that the response was a success, redirect, missing, or
+                                error:</p><div class="informalexample" id="testing_id119898"><pre class="programlisting" id="testing_id119900">assert_response :success  # Status code was 200
+assert_response :redirect # Status code was in the 300-399 range
+assert_response :missing  # Status code was 404
+assert_response :error    # Status code was in the 500-599 range</pre></div><p> You can also pass an explicit status
+                                number</p><div class="informalexample" id="testing_id119914"><pre class="programlisting" id="testing_id119916"># The response should be 401 (unauthorized)
+assert_response(401)</pre></div><p> or its symbolic equivalent:</p><div class="informalexample" id="testing_id119929"><pre class="programlisting" id="testing_id119932">assert_response(:unauthorized)</pre></div><p> See the Status Codes table in the Appendix or
+                                <code class="literal">ActionController::StatusCodes</code> for a full
+                        list.</p></dd><div class="comment_container" name="c_testing_id119872" id="c_testing_id119872"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id119872">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id119955"><span class="term"><code class="literal">assert_redirected_to(<em class="parameter"><code>options</code></em>, <em class="parameter"><code>[<span class="optional">message</span>]</code></em>)</code></span></dt><dd><p id="testing_id119977">Asserts that the tested controller action redirects as
+                                expected:</p><div class="informalexample" id="testing_id119981"><pre class="programlisting" id="testing_id119983">assert_redirected_to :controller =&gt; "articles", :action =&gt; "publish"</pre></div><p>Also takes named routes:</p><div class="informalexample" id="testing_id119996"><pre class="programlisting" id="testing_id119998">assert_redirected_to publish_articles_url</pre></div></dd><div class="comment_container" name="c_testing_id119955" id="c_testing_id119955"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id119955">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div><div class="comment_container" name="c_testing_id335272" id="c_testing_id335272"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335272">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id324633">Test all controller actions – just an <code class="code">assert_response :success</code> ensures your actions aren’t flat-out broken,
+            and is a great way to pick off low-hanging fruit when it comes to bugs.</p><div class="comment_container" name="c_testing_id324633" id="c_testing_id324633"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id324633">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="testing_id120029">View Tests</h3></div></div></div><p id="testing_id120035">Hidden away in functional tests, view testing centers around a select few
+                assertions that check to see if your templates have the <acronym class="acronym">HTML</acronym>,
+                    <acronym class="acronym">CSS</acronym>, or <acronym class="acronym">RJS</acronym> you’re looking
+                    for:</p><div class="variablelist"><dl><dt id="testing_id120741"><span class="term"><code class="literal">assert_select(<em class="parameter"><code>selector</code></em>, <em class="parameter"><code>[<span class="optional">equality_test</span>]</code></em>, <em class="parameter"><code>[<span class="optional">message</span>]</code></em>)</code>, </span><span class="term"><code class="literal">assert_select(<em class="parameter"><code>element</code></em>, <em class="parameter"><code>selector</code></em>, <em class="parameter"><code>[<span class="optional">equality_test</span>]</code></em>, <em class="parameter"><code>[<span class="optional">message</span>]</code></em>)</code></span></dt><dd><p id="testing_id120797">This is the most complex of all assertions.</p><p id="testing_id120801"><code class="literal">assert_select</code> selects some elements and runs an
+                                equality test on them. Without a given element (<span class="italic">i.e.</span> the second form), <code class="literal">assert_select</code> defaults to just looking at the
+                                response body.</p><p id="testing_id120822">The selector can be a CSS selector expression (in a <code class="literal">String</code>), </p><div class="informalexample" id="testing_id120830"><pre class="programlisting" id="testing_id120832"># At least one form exists
+assert_select "form"
+
+# A ul element with a menu-class applied exists under a div
+# with a header-class applied to it
+assert_select "body div.header ul.menu"</pre></div><p>an expression with substitution values,
+                                    </p><div class="informalexample" id="testing_id120154"><pre class="programlisting" id="testing_id120156"># At least one li with id like #item-1 or other number exists under an ol
+assert_select "ol&gt;li#?", /item-\d+/</pre></div><p>or an HTML::Selector object.</p><div class="informalexample" id="testing_id120164"><pre class="programlisting" id="testing_id120166"># Match a form with class login and action /login
+selector = HTML::Selector.new "form.login[action=/login]"
+assert_select selector</pre></div><p id="testing_id120174">When called with a block <code class="literal">assert_select</code> passes
+                                an <code class="literal">Array</code> of selected elements to the block.
+                                Calling <code class="literal">assert_select</code> from the block with no
+                                element specified runs the assertion on the complete set of elements
+                                selected by the enclosing assertion. Alternatively, the <code class="literal">Array</code> may be iterated through so that <code class="literal">assert_select</code> can be called separately for each
+                                    element.</p><div class="informalexample" id="testing_id120210"><pre class="programlisting" id="testing_id120212"># Any ol element with 4 li elements beneath it
+assert_select "ol" do |elements|
+  elements.each do |element|
+    assert_select element, "li", 4
+  end
+end
+
+# Match any ol with 8 li elements beneath it
+assert_select "ol" do
+  assert_select "li", 8
+end
+
+# All input fields in the form have a name
+assert_select "form input" do
+  assert_select "[name=?]", /.+/  # Not empty
+end</pre></div><p id="testing_id120225">The equality tests are as follows:</p><div class="table" id="testing_id120228"><p class="title"><b>Table 7.1. Equality Tests</b></p><div class="table-contents"><table summary="Equality Tests" border="0"><colgroup><col /><col /><col /></colgroup><tbody><tr><td><code class="literal">true</code></td><td>At least 1 element selected (the default;
+                                                  used when no test specified)</td><td>
+                                                  <pre class="programlisting" id="testing_id120964"># Page contains at least 1 form
+assert_select "form", true</pre>
+                                                </td></tr><tr><td><code class="literal">false</code></td><td>No elements selected</td><td>
+                                                  <pre class="programlisting" id="testing_id120278"># Page contains no forms
+assert_select "form", false</pre>
+                                                </td></tr><tr><td><code class="literal">String/Regexp</code></td><td>Text value of at least 1 element matches the
+                                                  String or regex</td><td>
+                                                  <pre class="programlisting" id="testing_id120302"># Page title is "Welcome"
+assert_select "title", "Welcome"
+
+# Page title is "Hi Edward" or "Hi John"
+assert_select "title", /Welcome (Edward|John)/</pre>
+                                                </td></tr><tr><td><code class="literal">Integer</code></td><td>Exactly this many elements are selected</td><td>
+                                                  <pre class="programlisting" id="testing_id121038"># Form element includes 4 input fields
+assert_select "form input", 4</pre>
+                                                </td></tr><tr><td><code class="literal">Range</code></td><td>[This..many] elements are selected</td><td>
+                                                  <pre class="programlisting" id="testing_id121061"># Form element includes between 4 and 8 input fields
+assert_select "form input", (4..8)</pre>
+                                                </td></tr></tbody></table></div></div><p><br class="table-break" />Narrow-down an equality test by passing in a Hash instead,
+                                using a combination of these key/value combinations to change the
+                                way elements are selected and equality tests are applied:</p><div class="table" id="testing_id120366"><p class="title"><b>Table 7.2. Augmented Equality Tests</b></p><div class="table-contents"><table summary="Augmented Equality Tests" border="0"><colgroup><col /><col /><col /></colgroup><thead><tr><th><code class="literal">:key</code></th><th><code class="literal">:value</code></th><th><code class="literal">{:key =&gt; :value}
+                                                  Explanation</code></th></tr></thead><tbody><tr><td><code class="literal">:text</code></td><td><code class="literal">String/Regexp</code></td><td>Select just the elements that have this as
+                                                  their text value</td></tr><tr><td><code class="literal">:html</code></td><td><code class="literal">String/Regexp</code></td><td>Select just the elements that have as their
+                                                  HTML content</td></tr><tr><td><code class="literal">:count</code></td><td><code class="literal">Integer</code></td><td>Test passes if exactly this many elements are
+                                                  selected</td></tr><tr><td><code class="literal">:minimum</code></td><td><code class="literal">Integer</code></td><td>At least this many elements are
+                                                selected</td></tr><tr><td><code class="literal">:maximum</code></td><td><code class="literal">Integer</code></td><td>At most this many elements are
+                                                selected</td></tr></tbody></table></div></div><p><br class="table-break" /></p><div class="informalexample" id="testing_id120510"><pre class="programlisting" id="testing_id120512"># Page title is "Welcome" and there is only one title element
+assert_select "title", {:count=&gt;1, :text=&gt;"Welcome"},
+              "Wrong title or more than one title element"</pre></div><p id="testing_id120521">For more on selectors, see the Rails documentation on <code class="literal">HTML::Selector</code>.</p></dd><div class="comment_container" name="c_testing_id120741" id="c_testing_id120741"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id120741">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id120532"><span class="term"><code class="literal">assert_select_rjs()</code></span></dt><dd><p id="testing_id120543">I have yet to see this ever used.</p></dd><div class="comment_container" name="c_testing_id120532" id="c_testing_id120532"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id120532">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id121276"><span class="term"><code class="literal">assert_select_email</code></span></dt><dd><p id="testing_id121286">The same as <code class="literal">assert_select</code>, but runs on
+                                extracted email. Note that you must enable email deliveries to work:
+                                    <code class="code">ActionMailer::Base.perform_deliveries =
+                                    true</code></p><div class="informalexample" id="testing_id121300"><pre class="programlisting" id="testing_id121302">assert_select_email do
+  assert_select "h1", "Email alert"
+end
+
+assert_select_email do
+  items = assert_select "ol&gt;li"
+  items.each do
+     # Work with items here...
+  end
+end</pre></div></dd><div class="comment_container" name="c_testing_id121276" id="c_testing_id121276"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id121276">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div><div class="comment_container" name="c_testing_id120035" id="c_testing_id120035"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id120035">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id120550">As a general piece of advice with regard to testing your view code (to be taken
+                with a grain of salt), it’s a good idea to assert the presence of only the
+                really important; checking for the non-essentials (<span class="italic">e.g.</span> asserting an element’s colour is red) can slow development
+                down when your visual style changes.</p><div class="comment_container" name="c_testing_id120550" id="c_testing_id120550"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id120550">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="testing_id324648">Integration Tests</h2></div></div></div><p id="testing_id324653">Integration tests run against the entire Rails stack, allowing
+            you to test multiple controllers and actions, effectively simulating a user clicking
+            through your application. They are the highest level of testing that Rails provides;
+            they allow you to test all the components of your application, from routing to database
+            access.</p><div class="comment_container" name="c_testing_id324653" id="c_testing_id324653"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id324653">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="testing_id60560">Creating an integration test</h3></div></div></div><p id="testing_id60565">Unlike unit and functional tests, integration tests are not
+                created automatically when you generate models and controllers. They are too tightly
+                coupled to your application's individual workflow for Rails to be able to guess your
+                needs. You can generate an integration test with the <span class="command"><strong>generate
+                    integration_test</strong></span> command:</p><div class="comment_container" name="c_testing_id60565" id="c_testing_id60565"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id60565">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="testing_id340548"><pre class="programlisting" id="testing_id340550">$ script/generate integration_test Articles
+      create  test/integration/
+      create  test/integration/articles_test.rb</pre><div class="comment_container" name="c_testing_id340550" id="c_testing_id340550"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id340550">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="testing_id340516">Integration testing commands</h3></div></div></div><p id="testing_id340521">A basic integration test looks a lot like a functional test,
+                and uses the familar <code class="code"><code class="methodname">get</code></code>, <code class="code"><code class="methodname">post</code></code>, <code class="code"><code class="methodname">put</code></code>, and
+                    <code class="code"><code class="methodname">delete</code></code> HTTP methods to simulate the
+                requests that would be created by a web browser. All the assertions you find in unit
+                and functional tests are available for your testing needs, but Rails provides a few
+                integration-specific helpers:</p><div class="comment_container" name="c_testing_id340521" id="c_testing_id340521"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id340521">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="variablelist"><dl><dt id="testing_id120668"><span class="term"><code class="literal">redirect?</code></span></dt><dd><p id="testing_id337567">True when the last response was a
+                        redirect.</p></dd><div class="comment_container" name="c_testing_id120668" id="c_testing_id120668"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id120668">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id120689"><span class="term"><code class="literal">follow_redirect!</code></span></dt><dd><p id="testing_id61131">Follows a single redirect. Raises an error if the
+                            last response was not a redirect.</p></dd><div class="comment_container" name="c_testing_id120689" id="c_testing_id120689"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id120689">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id120710"><span class="term"><code class="literal">get_via_redirect(<em class="parameter"><code>obj</code></em>, <em class="parameter"><code>[<span class="optional">parameters = nil</span>]</code></em>, <em class="parameter"><code>[<span class="optional">headers = nil</span>]</code></em>)</code>, </span><span class="term"><code class="literal">post_via_redirect(<em class="parameter"><code>obj</code></em>, <em class="parameter"><code>[<span class="optional">parameters = nil</span>]</code></em>, <em class="parameter"><code>[<span class="optional">headers = nil</span>]</code></em>)</code>, </span><span class="term"><code class="literal">put_via_redirect(<em class="parameter"><code>obj</code></em>, <em class="parameter"><code>[<span class="optional">parameters = nil</span>]</code></em>, <em class="parameter"><code>[<span class="optional">headers = nil</span>]</code></em>)</code>, </span><span class="term"><code class="literal">delete_via_redirect(<em class="parameter"><code>obj</code></em>, <em class="parameter"><code>[<span class="optional">parameters = nil</span>]</code></em>, <em class="parameter"><code>[<span class="optional">headers = nil</span>]</code></em>)</code></span></dt><dd><p id="testing_id60037">Acts just like the normal <code class="code"><code class="methodname">get</code></code>, <code class="code"><code class="methodname">post</code></code>, <code class="code"><code class="methodname">put</code></code>,
+                            and <code class="code"><code class="methodname">delete</code></code> methods but also
+                            follows any resulting redirects.</p></dd><div class="comment_container" name="c_testing_id120710" id="c_testing_id120710"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id120710">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id120836"><span class="term"><code class="literal">https?</code></span></dt><dd><p id="testing_id344127">True if the session is set to mimic an HTTPS
+                            request.</p></dd><div class="comment_container" name="c_testing_id120836" id="c_testing_id120836"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id120836">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id120857"><span class="term"><code class="literal">https!(<em class="parameter"><code>[<span class="optional">flag =
+                        true</span>]</code></em>)</code></span></dt><dd><p id="testing_id344146">Tells the test environment to mimic secure HTTPS
+                            requests (or a regular HTTP request if passed false).</p></dd><div class="comment_container" name="c_testing_id120857" id="c_testing_id120857"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id120857">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id120886"><span class="term"><code class="literal">host!(<em class="parameter"><code>name</code></em>)</code></span></dt><dd><p id="testing_id344166">Sets the host name for future test requests.
+                            Especially useful for testing apps with that provide custom
+                        sub-domains.</p></dd><div class="comment_container" name="c_testing_id120886" id="c_testing_id120886"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id120886">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="testing_id120914"><span class="term"><code class="literal">reset!</code></span></dt><dd><p id="testing_id344182">Resets the test instance, clearing any
+                            information in the session, as well as host and https settings.</p></dd><div class="comment_container" name="c_testing_id120914" id="c_testing_id120914"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id120914">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="testing_id65541">Testing the article workflow</h3></div></div></div><p id="testing_id65546">Integration tests look an awful lot like several functional
+                tests put together. Here's a integration test that tests our entire article
+                workflow, from sign-in, through creation, to deletion.</p><div class="comment_container" name="c_testing_id65546" id="c_testing_id65546"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id65546">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="testing_id65553"><pre class="programlisting" id="testing_id65555">require 'test_helper'
+
+class ArticlesTest &lt; ActionController::IntegrationTest
+  
+  test "articles workflow" do
+    alice = users(:alice)
+    
+    # login as alice
+    post "/session", :user =&gt; {:login =&gt; alice.login,
+                               :password =&gt; alice.password}
+    follow_redirect!
+    assert_response :success
+    assert_equal "/articles", path
+    
+    # create an article
+    post "/articles", :article =&gt; {:title =&gt; 'Brand new article'}
+    assert_redirected_to "/articles"
+    follow_redirect!
+    assert_response :success
+    
+    # view the article
+    article = alice.articles.first
+    get "/articles/#{article.id}"
+    assert_response :success
+    
+    # delete the article
+    delete "/articles/#{article.id}"
+    assert_redirected_to "/articles"
+    follow_redirect!
+    assert_response :success
+    
+    # expect 404 when trying to view a deleted article
+    get "/articles/#{article.id}"
+    assert_response :missing
+  end
+  
+end</pre><div class="comment_container" name="c_testing_id65555" id="c_testing_id65555"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id65555">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="testing_id321257">Testing multiple sessions</h3></div></div></div><p id="testing_id321263">The interaction of multiple users with an application can
+                get very complicated, and is often the source of hidden bugs. Testing for these bugs
+                by juggling multiple browsers is clumsy and difficult. Thankfully, integration tests
+                are much more flexible and can save us from these elusive bugs by allowing for
+                multiple simultaneous sessions to be played with during the test.</p><div class="comment_container" name="c_testing_id321263" id="c_testing_id321263"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id321263">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id321273">Integration tests will automatically create a default
+                session for you, but you can use the <code class="code"><code class="methodname">open_session</code></code> method to create as many sessions as you need.
+                Each session is extended with the full set of assertions and test helpers, so you
+                can use helpers like <code class="code"><code class="methodname">assert_response</code></code> and <code class="code"><code class="methodname">follow_redirect!</code></code> and Rails will
+                automatically use the appropriate response.</p><div class="comment_container" name="c_testing_id321273" id="c_testing_id321273"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id321273">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id321296">This example uses two sessions to prove that users may only
+                delete their own posts:</p><div class="comment_container" name="c_testing_id321296" id="c_testing_id321296"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id321296">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="testing_id321301"><pre class="programlisting" id="testing_id321303">require 'test_helper'
+
+class ArticleSafetyTest &lt; ActionController::IntegrationTest
+  
+  test "article safety" do
+    # alice logs in
+    alice = open_session
+    alice.post "/session",
+             :user =&gt; {:login =&gt; users(:alice).login,
+                       :password =&gt; users(:alice).password}
+    alice.follow_redirect!
+    alice.assert_response :success
+    alice.assert_equal "/articles", alice.path
+    
+    # bob logs in
+    bob = open_session
+    bob.post "/session",
+             :user =&gt; {:login =&gt; users(:bob).login,
+                       :password =&gt; users(:bob).password}
+    bob.follow_redirect!
+    bob.assert_response :success
+    bob.assert_equal "/articles", bob.path
+    
+    # alice creates an article
+    alice.post "/articles",
+               :article =&gt; {:title =&gt; 'Brand new article'}
+    
+    # store alice's article
+    article = alice.assigns(:article)
+    
+    alice.follow_redirect!
+    alice.assert_response :success
+    alice.assert_equal "/articles", alice.path
+    
+    # bob can't delete alice's article
+    bob.delete "/articles/#{article.id}"
+    bob.assert_response :not_found
+    
+    # alice can delete her article
+    alice.delete "/articles/#{article.id}"
+    alice.follow_redirect!
+    alice.assert_response :success
+    alice.assert_equal "/articles", alice.path
+  end
+  
+end</pre><div class="comment_container" name="c_testing_id321303" id="c_testing_id321303"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id321303">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="testing_id321313">Extending integration tests with helpers</h3></div></div></div><p id="testing_id321319">Integration testing complex interactions like multiple users
+                gets very verbose. Thankfully, we can decorate our sessions with custom helpers
+                tailored to our application. With this technique, you can <acronym class="acronym">DRY</acronym> up
+                your tests while building a powerful and easy to read testing <acronym class="acronym">DSL</acronym>
+                for your app.</p><div class="comment_container" name="c_testing_id321319" id="c_testing_id321319"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id321319">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id321334">The first step is to define a module in <code class="filename">test/test_helper.rb</code> to encapsulate your reusable helpers and
+                assertions. This example encapsulates three common actions in our app: logging in,
+                viewing a specific article, and creating a new article:</p><div class="comment_container" name="c_testing_id321334" id="c_testing_id321334"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id321334">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="testing_id321346"><pre class="programlisting" id="testing_id321348">module IntegrationHelper
+  def login(name, password)
+    user = users(name)
+    post "/session", :user =&gt; {:login =&gt; name, :password =&gt; password}
+    follow_redirect!
+    assert_response :success
+    assert_equal "/articles", path
+  end
+  
+  def get_article(article)
+    get "/articles/#{article.to_param}"
+    assert_response :success
+  end
+  
+  def post_article(attributes = {})
+    post "/articles", :article =&gt; attributes
+    article = assigns(:article)
+    follow_redirect!
+    assert_response :success
+    assert_equal "/articles", path
+    article
+  end
+end</pre><div class="comment_container" name="c_testing_id321348" id="c_testing_id321348"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id321348">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="testing_id327222">The next step on our quest for <acronym class="acronym">DRY</acronym>
+                integration tests is create a helper so we can easily create new sessions. This
+                helper loads the user from the users fixture, creates a new session (using the
+                alternative block syntax), extends the session with our custom helpers, and finally
+                logs in to the app, allowing us to log in new users with one simple, readable line
+                of code:</p><div class="comment_container" name="c_testing_id327222" id="c_testing_id327222"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id327222">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="testing_id327235"><pre class="programlisting" id="testing_id327237">def login_as(name)
+  user = users(name)
+  open_session do |session|
+    session.extend IntegrationHelper
+    session.login(user.login, user.password)
+  end
+end</pre><div class="comment_container" name="c_testing_id327237" id="c_testing_id327237"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id327237">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="testing_id327246">With all the helpers finally in place, our multi-user
+                integration tests are a thing of beauty—easy to read and even easier to write.</p><div class="comment_container" name="c_testing_id327246" id="c_testing_id327246"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id327246">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="testing_id327251"><pre class="programlisting" id="testing_id341230">test "multi-user article posting" do
+  # alice &amp; bob log in
+  alice = login_as(:alice)
+  bob = login_as(:bob)
+  
+  # alice &amp; bob create a articles
+  alice_article = alice.post_article(:title =&gt; 'Alice is awesome')
+  bob_article = bob.post_article(:title =&gt; "Bob's the best")
+  
+  # alice &amp; bob can view each others articles
+  alice.get_article(alice_article)
+  alice.get_article(bob_article)
+  
+  bob.get_article(bob_article)
+  bob.get_article(alice_article)
+end</pre><div class="comment_container" name="c_testing_id341230" id="c_testing_id341230"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id341230">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="testing_id328858">We’ve boiled down this complex, multi-user interaction
+                to eight incredibly simple lines of code that test the entire Rails stack—from
+                router to database. These techniques allow you to build rock-solid apps without
+                creating an impenetrable snarl of testing code.</p><div class="comment_container" name="c_testing_id328858" id="c_testing_id328858"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328858">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="testing_id328905">Running tests</h2></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="testing_id328911">Using rake</h3></div></div></div><p id="testing_id328916">To run all tests, run</p><div class="informalexample" id="testing_id328918"><pre class="programlisting" id="testing_id328920">$ rake test</pre><div class="comment_container" name="c_testing_id328920" id="c_testing_id328920"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328920">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_testing_id328916" id="c_testing_id328916"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328916">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id328925">Individual test suite files can also be run
+                    manually:</p><div class="informalexample" id="testing_id328928"><pre class="programlisting" id="testing_id328930">$ ruby -I test test/unit/a_model_test.rb</pre><div class="comment_container" name="c_testing_id328930" id="c_testing_id328930"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328930">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_testing_id328925" id="c_testing_id328925"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328925">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="note"><h3 class="title">Note</h3><p id="testing_id328936">When running tests manually like this, you might also
+                    have to first clone the testing database so that it has the same schema as your
+                    development environment’s (this database cloning step is done for you when
+                    using the <code class="code">rake</code> commands):</p><div class="informalexample" id="testing_id328945"><pre class="programlisting" id="testing_id328947">$ rake db:test:clone</pre><div class="comment_container" name="c_testing_id328947" id="c_testing_id328947"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328947">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_testing_id328936" id="c_testing_id328936"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328936">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="testing_id328953">Related <code class="code">rake</code> tasks can be discovered with
+                    <span class="command"><strong>$ rake -T test</strong></span>:</p><div class="informalexample" id="testing_id328962"><pre class="programlisting" id="testing_id328964">$ rake -T test
+rake db:test:clone            # Recreate the test database from the current environment's database schema
+rake db:test:clone_structure  # Recreate the test databases from the development structure
+rake db:test:load             # Recreate the test database from the current schema.rb
+rake db:test:prepare          # Check for pending migrations and load the test schema
+rake db:test:purge            # Empty the test database
+rake test                     # Run all unit, functional and integration tests
+rake test:benchmark           # Run tests for benchmarkdb:test:prepare / Benchmark the performance tests
+rake test:functionals         # Run tests for functionalsdb:test:prepare / Run the functional tests in test/functional
+rake test:integration         # Run tests for integrationdb:test:prepare / Run the integration tests in test/integration
+rake test:plugins             # Run tests for pluginsenvironment / Run the plugin tests in vendor/plugins/*/**/test (or specify with PLUGIN=name)
+rake test:profile             # Run tests for profiledb:test:prepare / Profile the performance tests
+rake test:recent              # Run tests for recentdb:test:prepare / Test recent changes
+rake test:uncommitted         # Run tests for uncommitteddb:test:prepare / Test changes since last checkin (only Subversion and Git)
+rake test:units               # Run tests for unitsdb:test:prepare / Run the unit tests in test/unit</pre><div class="comment_container" name="c_testing_id328964" id="c_testing_id328964"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328964">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_testing_id328953" id="c_testing_id328953"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328953">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id328973">Running tests in a continuous feedback loop where the tests
+                re-run themselves upon modification of test or application code can be accomplished
+                by using the <code class="code">autotest</code> command, part of Ryan Davis’
+                <code class="code">zentest</code> gem. This makes Test Driven Design (TDD) easy, and facilitates
+                staying in that zen-like state of flow, where time flies around you, and
+                you’re rarely stuck on a hard-to-pin-down bug, or wondering what next to do.</p><div class="comment_container" name="c_testing_id328973" id="c_testing_id328973"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328973">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id328990">Running autotest -f is the way to go; no manual running of
+                tests, and you stay in-flow. The -f flag (thanks James!) makes it so that it
+                doesn’t run the entire test-suite after passing everything.</p><div class="comment_container" name="c_testing_id328990" id="c_testing_id328990"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328990">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="testing_id329004">Test environment</h3></div></div></div><p id="testing_id349013">What happens in test land stays in test land.</p><div class="comment_container" name="c_testing_id349013" id="c_testing_id349013"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id349013">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id349017">Rails empties the test database between tests, so use a
+                separate database for testing. Take a look at the <code class="code">config/database.yml</code>
+                generated for a fresh application:</p><div class="comment_container" name="c_testing_id349017" id="c_testing_id349017"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id349017">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id328993">Entirely separate database: see database.yml</p><div class="comment_container" name="c_testing_id328993" id="c_testing_id328993"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id328993">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id335666">On running tests, Rails empties and reloads the test
+                database with fixture data. For this reason, your test database should not be the
+                same as development or production.</p><div class="comment_container" name="c_testing_id335666" id="c_testing_id335666"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335666">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id335673">Each test runs in a single uncommitted transaction and
+                rolled back. Look into turning this off to test transactions</p><div class="comment_container" name="c_testing_id335673" id="c_testing_id335673"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335673">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="testing_id335678">For example, action mailer testing sends email, but does so
+                internally to an array called [$i forget what this is called] [talk about
+                config/environments/test.rb]</p><div class="comment_container" name="c_testing_id335678" id="c_testing_id335678"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id335678">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="testing_id323936">Debugging within a test</h2></div></div></div><p id="testing_id323941">A quick path to fixing bugs is to debug from within or in
+            conjunction with writing and running your tests. The tests act as a clean way of
+            recreating your reproduction steps, allowing you to throw in a debug statement in the
+            middle of your test code, or in the code being tested. See the debugging chapter for
+            more.</p><div class="comment_container" name="c_testing_id323941" id="c_testing_id323941"><p class="comment_count">
+          <a class="comment_count" href="#">No comments yet</a>
+      </p><div class="comment" id="comments_for_testing_id323941">
+
+
+        <h4><a href="#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><!-- Comment form -->
+
+   <div id="comment_form_main" class="comment_form">
+
+
+<h5>You must sign in or <a href="/register">register</a> before commenting</h5>
+
+  <form action="/signin" method="post"><table>
+     <tr class="field">
+<td class="label" valign="top"><label>Username:</label></td>
+<td class="field" colspan="2" valign="top"><input id="username" name="username" type="text" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input name="redirect_to" type="hidden" value="http://rails-nutshell.labs.oreilly.com/ch07.html" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input name="xml_id" type="hidden" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label>Password:</label></td>
+<td class="field" colspan="2" valign="top"><input id="password" name="password" type="password" /></td>
+</tr>
+  <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input id="submit" name="submit" type="submit" value="Sign in" /></td>
+</tr>
+  </table></form>
+
+
+
+</div>
+
+
+<div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch06.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 6. Active Support </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 8. Plugins</td></tr></table></div><div class="footer-copyright"></div></body></html>

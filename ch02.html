@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="js/jquery-1.3.2.min.js" type="text/javascript"></script>
+    
+    <script src="js/openfeedback.js" type="text/javascript"></script>
+        
+
+    <link rel="alternate" type="application/atom+xml" title="Comments on this page" href="comments/feed/ch02.html" />
+    <link rel="alternate" type="application/atom+xml" title="All comments on Rails in a Nutshell" href="comments/feed%3Fid=book" />
+
+        <title>Chapter 2. Action Controller</title><link rel="stylesheet" href="css/ofps_main.css" type="text/css" /><link rel="stylesheet" href="css/ofps_ui.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.74.3" /><link rel="home" href="index.html" title="Rails in a Nutshell" /><link rel="up" href="index.html" title="Rails in a Nutshell" /><link rel="prev" href="ch01.html" title="Chapter 1. Rails" /><link rel="next" href="ch03.html" title="Chapter 3. Active Record" /></head><body><div class="oreilly-header"><ul><li><p><a href="http://oreilly.com/"><img alt="O'Reilly Logo" src="oreilly-logo.jpg" /></a></p></li><li><p id="oreilly-breadcrumbs"><a href="http://labs.oreilly.com/">Labs</a> &gt; <a href="http://labs.oreilly.com/ofps.html">OFPS</a> &gt; <a href="index.html">Rails in a Nutshell</a></p></li><li><p class="login">
+
+          <a href="signin.html">Sign-in</a> or 
+          <a href="register.html">Register</a>
+
+            </p></li><li><p class="ofps-show-hide-all-comments"><a href="ch02.html#" class="ofps-show-hide-all-comments-toggle">Show all comments</a></p></li><li><p><a href="http://labs.oreilly.com/ofps.html">Help</a></p></li></ul></div><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 2. Action Controller</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch03.html">Next</a></td></tr></table><hr /></div><div class="chapter" lang="en" id="actioncontroller_id57640" xml:lang="en"><div class="titlepage"><div><div><h2 class="title">Chapter 2. Action Controller</h2></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="sessions_id347021">Sessions</h2></div></div></div><p id="sessions_id349958">Maintaining state between a user's requests is a requirement of most of today's web
+        applications. Tracking the state of an application's user between HTTP transactions has many
+        important uses including personalization of content, tracking desired items for purchase in
+        a shopping cart, knowing which user is currently logged in, and many others.</p><div class="comment_container" name="c_sessions_id349958" id="c_sessions_id349958"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id349958">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id394568">Since <abbr class="abbrev">HTTP</abbr> is a stateless protocol by design, the server doesn't maintain
+        any user information between requests. This means that it is up to the application framework
+        or developer to provide session support.</p><div class="comment_container" name="c_sessions_id394568" id="c_sessions_id394568"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394568">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id394578">Rails has complete support for sessions and makes maintaining user state easy through
+        client or server based session stores. Rails supports several different session stores,
+        allowing the developer to choose the type of session store that best meets the needs of the
+        application.</p><div class="comment_container" name="c_sessions_id394578" id="c_sessions_id394578"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394578">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="sessions_id394586">Using the session</h3></div></div></div><p id="sessions_id394591">The session is used like a hash and is available through the <code class="literal">session</code> accessor in controllers and views. To store an object in the session
+            you assign a key in the session to the value you want to store:</p><div class="comment_container" name="c_sessions_id394591" id="c_sessions_id394591"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394591">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id394601"><pre class="programlisting" id="sessions_id394604">session[:user_id] = @user.id</pre><div class="comment_container" name="c_sessions_id394604" id="c_sessions_id394604"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394604">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id394612">The session does not use indifferent access to hashes, unlike other parts of Rails
+            such as <code class="literal">params</code>. This means that the keys <code class="literal">"user_id"</code>
+            and <code class="literal">:user_id</code> are two different keys in the <code class="literal">session</code>, whereas they would be treated as the same key when accessing the
+                <code class="literal">params</code> hash.</p><div class="comment_container" name="c_sessions_id394612" id="c_sessions_id394612"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394612">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id394635">Above, just the user's <code class="literal">id</code> was stored in the session, but any object
+            can be stored in the session:</p><div class="comment_container" name="c_sessions_id394635" id="c_sessions_id394635"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394635">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id394643"><pre class="programlisting" id="sessions_id394645">session[:user] = @user</pre><div class="comment_container" name="c_sessions_id394645" id="c_sessions_id394645"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394645">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id394654">Any object can be stored in the session because Rails automatically serializes and
+            deserializes session data to and from the session store using <code class="methodname">Marshal.dump</code> and <code class="classname">Marshal.load</code>. However, it is
+            recommended to store only simple objects such as strings, and numbers in the session.
+            Instead of storing the entire user in the session you would store the user's <code class="literal">id</code> and load the user on demand when needed during the request. Storing only
+            lightweight, simple data in the session will help you avoid issues that might arise
+            during deserialization of the stored objects from the session. Keeping a minimal amount
+            of data in the session will also save on communication overhead for each request and
+            response when you're using cookie session store.</p><div class="comment_container" name="c_sessions_id394654" id="c_sessions_id394654"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394654">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id394680">Session data is retrieved by accessing the key in the session where the value was
+            stored:</p><div class="comment_container" name="c_sessions_id394680" id="c_sessions_id394680"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394680">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id394685"><pre class="programlisting" id="sessions_id394687">session[:user_id] # =&gt; 256700</pre><div class="comment_container" name="c_sessions_id394687" id="c_sessions_id394687"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394687">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id394696">To clear a particular key of the session you set the value to <code class="literal">nil</code>:</p><div class="comment_container" name="c_sessions_id394696" id="c_sessions_id394696"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394696">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id394704"><pre class="programlisting" id="sessions_id394706">session[:user_id] = nil</pre><div class="comment_container" name="c_sessions_id394706" id="c_sessions_id394706"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394706">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id394717">To clear out the entire session you call:</p><div class="comment_container" name="c_sessions_id394717" id="c_sessions_id394717"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394717">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id394721"><pre class="programlisting" id="sessions_id394723">reset_session</pre><div class="comment_container" name="c_sessions_id394723" id="c_sessions_id394723"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394723">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="note"><h3 class="title">Note</h3><p id="sessions_id394736">Since there is an overhead required to maintaining a user's session, it can
+                sometimes be desirable to disable sessions for the parts of an application where
+                sessions aren't required or for clients, such as web crawlers, that don't use
+                cookies. As of Rails 2.3, sessions are lazy loaded. This means that the session
+                won't be loaded unless you use access it during a request.</p><div class="comment_container" name="c_sessions_id394736" id="c_sessions_id394736"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394736">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id394748">Keep in mind that resetting the session will also wipe out any other data that Rails
+            is storing in the session, such as the <abbr class="abbrev">CSRF</abbr> token or any flash messages
+            that have been set.</p><div class="comment_container" name="c_sessions_id394748" id="c_sessions_id394748"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394748">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id394758">Let's take a look at a more complete example of session use. The following code,
+            adapted from Rick Olson's <a class="ulink" href="http://github.com/technoweenie/restful-authentication" target="_top">Restful Authentication
+                plugin</a>, is used for finding the currently logged in user from the session: </p><div class="comment_container" name="c_sessions_id394758" id="c_sessions_id394758"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394758">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id394771"><pre class="programlisting" id="sessions_id394773">class ApplicationController &lt; ActionController::Base
+  helper_method :current_user
+
+  protected
+  # Accesses the current user from the session.
+  # Future calls avoid the database because nil is not equal to false.
+  def current_user
+    @current_user ||= login_from_session unless @current_user == false
+  end
+
+  # Store the given user id in the session.
+  def current_user=(new_user)
+    session[:user_id] = new_user ? new_user.id : nil
+    @current_user = new_user || false
+  end
+
+  # Called from #current_user. Attempt to login by the user id stored in the session.
+  def login_from_session
+    if session[:user_id]
+      self.current_user = User.find_by_id(session[:user_id])
+    end
+  end
+end</pre><div class="comment_container" name="c_sessions_id394773" id="c_sessions_id394773"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394773">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id394784">The code is a great example of session use that follows the Rails best practices.
+            We're now going to take a look at the different session stores offered by Rails and how
+            to configure them in your application.</p><div class="comment_container" name="c_sessions_id394784" id="c_sessions_id394784"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394784">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="sessions_id394793">Session Stores</h3></div></div></div><p id="sessions_id394798">A session store determines how and where session data is stored. Rails provides three
+            different session stores that you can use in your application: the cookie store, the
+            memcache store, and the Active Record store. By default, Rails uses the cookie session
+            store. Let's take a closer look at each of the different session stores and why you
+            might want to choose one over the other.</p><div class="comment_container" name="c_sessions_id394798" id="c_sessions_id394798"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394798">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title" id="sessions_id394808">Cookie Store</h4></div></div></div><p id="sessions_id394814">The cookie session store keeps session data in a cookie in the client's browser.
+                The cookie store is great because it requires no setup or configuration and is much
+                faster than the other session stores. The session data is sent in a cookie with each
+                request by the client and the server writes the session data in the cookie headers
+                of each response, so it is a good idea to keep the session small to reduce the
+                overhead of each request/response cycle.</p><div class="comment_container" name="c_sessions_id394814" id="c_sessions_id394814"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394814">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id394817">Since the data is stored in a cookie, the maximum size of the encoded session data
+                is limited to the maximum usable size of a cookie by all browsers, which is 4
+                    <abbr class="abbrev">KB</abbr>. However, since the data is encoded and has a cryptographic
+                signature attached to it, the most data you'll likely fit in the cookie store is
+                around 2.5 <abbr class="abbrev">KB</abbr>. If you need to store more than around 2.5 <abbr class="abbrev">KB</abbr> of data you'd want to use one of the other session stores. If you do
+                end up putting too much data in the session you'll end up triggering an exception
+                when Rails processes the session data for the response.</p><div class="comment_container" name="c_sessions_id394817" id="c_sessions_id394817"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394817">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id394841">Another thing to keep in mind is that the session data is readable by the client.
+                The data is cryptographically signed by Rails using and <abbr class="abbrev">HMAC</abbr> to
+                prevent tampering, but the data is not encrypted. This means that you would never
+                want to store sensitive private information in the session when using the cookie
+                session store. If you must store private information in the session then you'd want
+                to use one of the other session stores that maintains session data on the
+            server.</p><div class="comment_container" name="c_sessions_id394841" id="c_sessions_id394841"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394841">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title" id="sessions_id394858">Active Record Store</h4></div></div></div><p id="sessions_id394864">The Active Record session store keeps all session data in the database. There are
+                two reasons you might want to use this session store. The first is if you need to
+                store more data in the session than will fit in the cookie session store. The second
+                is if you need to store confidential information in the session. </p><div class="comment_container" name="c_sessions_id394864" id="c_sessions_id394864"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394864">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id394873">The maximum size of the data stored in the Active Record session store depends on
+                the maximum size of the database column you choose to store the session data in. By
+                default, Rails uses a <code class="literal">:text</code> column for storing the session data,
+                which with MySQL stores around 64 <abbr class="abbrev">KB</abbr> of data.</p><div class="comment_container" name="c_sessions_id394873" id="c_sessions_id394873"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394873">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title" id="sessions_id394889">Memcached Store</h4></div></div></div><p id="sessions_id394894">The Memcached session store is server side session store much like the Active
+                Record session store, but using Memcached for the back-end storage of the sessions.
+                One major difference from the Active Record session store is that session data is
+                not persistent in the Memcached session store. This is an inherent limitation of
+                Memcached itself not being a persistent data store. The maximum size of session that
+                can be stored in a Memcached server is 1 <abbr class="abbrev">MB</abbr>.</p><div class="comment_container" name="c_sessions_id394894" id="c_sessions_id394894"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394894">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id394901">The reason you might want to use the Memcached session store is to leverage your
+                existing Memcached infrastructure and to keep the load of sessions from impacting
+                your database. You will still only want to use this session store if cookie session
+                store is not adequate for your needs.</p><div class="comment_container" name="c_sessions_id394901" id="c_sessions_id394901"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394901">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="sessions_id394912">Configuration</h3></div></div></div><p id="sessions_id394917">Rails automatically configures your application with the cookie session store when you
+            use the <span class="command"><strong>rails</strong></span> command to generate your Rails project. Customizing the
+            configuration of the session store is very straightforward if you do need to stray from
+            the default settings. The configuration of the session store is done in <code class="filename">config/initializers/session_store.rb</code>. There are two accessors on
+                <code class="classname">ActionController::Base</code> for configuring a session store:</p><div class="comment_container" name="c_sessions_id394917" id="c_sessions_id394917"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394917">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="variablelist"><dl><dt id="sessions_id394940"><span class="term"><code class="literal">ActionController::Base.session_store</code></span></dt><dd><p id="sessions_id394950">The session store to use. One of <code class="literal">:cookie_store</code>,
+                            <code class="literal">:mem_cache_store</code>, or <code class="literal">:active_record_store</code>. Defaults to <code class="literal">:cookie_store</code>.</p></dd><div class="comment_container" name="c_sessions_id394940" id="c_sessions_id394940"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394940">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id394969"><span class="term"><code class="literal">ActionController::Base.session</code></span></dt><dd><p id="sessions_id394977">The hash of session options for customization of the behavior of the
+                        session store. Options common to each session store are:</p><div class="variablelist"><dl><dt id="sessions_id394985"><span class="term"><code class="literal">:key</code></span></dt><dd><p id="sessions_id394994">The name of the cookie to store the session data in. Defaults
+                                    to <code class="literal">_session_id</code>.</p></dd><div class="comment_container" name="c_sessions_id394985" id="c_sessions_id394985"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394985">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395004"><span class="term"><code class="literal">:domain</code></span></dt><dd><p id="sessions_id395013">The domain the session cookie is valid for. Useful for sharing
+                                    a session cookie between subdomains. Defaults to <code class="literal">nil</code>, which means that the client use the requested
+                                    domain as the domain for the session cookie.</p></dd><div class="comment_container" name="c_sessions_id395004" id="c_sessions_id395004"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395004">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395026"><span class="term"><code class="literal">:path</code></span></dt><dd><p id="sessions_id395035">The path the session cookie is valid for. Defaults to <code class="literal">/</code>. Setting <code class="literal">:path</code> to <code class="literal">nil</code> instructs the client to use the requested
+                                    path as the path for the session cookie.</p></dd><div class="comment_container" name="c_sessions_id395026" id="c_sessions_id395026"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395026">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395053"><span class="term"><code class="literal">:expire_after</code></span></dt><dd><p id="sessions_id395061">How long from the time of the request to expire the session
+                                    cookie in. The number of seconds provided, such as <code class="literal">1.hour</code>, will be added to the current time at the
+                                    time of the request. Defaults to <code class="literal">nil</code>, which
+                                    means that the browser will discard the session cookie when it
+                                    closes.</p></dd><div class="comment_container" name="c_sessions_id395053" id="c_sessions_id395053"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395053">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395081"><span class="term"><code class="literal">:secure</code></span></dt><dd><p id="sessions_id395089">Instructs the client to only transmit the session cookie when
+                                    it has an <abbr class="abbrev">HTTPS</abbr> connection to the server.
+                                    Defaults to <code class="literal">false</code>.</p></dd><div class="comment_container" name="c_sessions_id395081" id="c_sessions_id395081"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395081">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395104"><span class="term"><code class="literal">:httponly</code></span></dt><dd><p id="sessions_id395113">Prevents client side scripts from accessing the session
+                                    cookie. This helps prevent cross site scripting (<abbr class="abbrev">XSS</abbr>) session hijacking attacks. Defaults to <code class="literal">true</code>.</p></dd><div class="comment_container" name="c_sessions_id395104" id="c_sessions_id395104"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395104">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395128"><span class="term"><code class="literal">:cookie_only</code></span></dt><dd><p id="sessions_id395136">Helps to prevent session hijacking by only setting the
+                                        <code class="literal">id</code> of the session from the value of the
+                                    session <code class="literal">id</code> stored in the session cookie when
+                                    using server side session stores. Defaults to <code class="literal">true</code>.</p></dd><div class="comment_container" name="c_sessions_id395128" id="c_sessions_id395128"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395128">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div></dd><div class="comment_container" name="c_sessions_id394969" id="c_sessions_id394969"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id394969">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div><p id="sessions_id395161">Following is an example of a <code class="filename">config/initializers/session_store.rb</code>
+            file that configures a Rails application to use the Active Record session store with a
+            couple of custom settings:</p><div class="comment_container" name="c_sessions_id395161" id="c_sessions_id395161"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395161">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id395170"><pre class="programlisting" id="sessions_id395172">ActionController::Base.session_store = :active_record_store
+
+ActionController::Base.session = {
+  :key          =&gt; '_blog_session',
+  :domain       =&gt; '.example.com',
+  :expire_after =&gt; 1.week
+}
+</pre><div class="comment_container" name="c_sessions_id395172" id="c_sessions_id395172"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395172">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id395184">Next we'll look at configuring each of the different session stores individually.</p><div class="comment_container" name="c_sessions_id395184" id="c_sessions_id395184"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395184">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title" id="sessions_id395188">Cookie Store</h4></div></div></div><p id="sessions_id395194">The cookie store is the default session store used by Rails. The default
+                configuration of the cookie store generated by the Rails application generator in
+                the <code class="filename">config/initializers/session_store.rb</code> file looks like the
+                following:</p><div class="comment_container" name="c_sessions_id395194" id="c_sessions_id395194"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395194">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><pre class="programlisting" id="sessions_id395205">ActionController::Base.session = {
+  :key         =&gt; '_blog_session',
+  :secret      =&gt; 'fdd1077479a7a13a8f3346c952047494b37a2fb6203b9a4a0ec03'
+}</pre><div class="comment_container" name="c_sessions_id395205" id="c_sessions_id395205"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395205">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id395215">Rails names the session <code class="literal">:key</code> based on the name of your
+                application. In the example the name of the application is <code class="literal">blog</code>.
+                A cryptographically secure <code class="literal">:secret</code> is also generated. The
+                    <code class="literal">:secret</code> option is required when using the cookie store. Also,
+                the <code class="literal">:secret</code> was shortened in order to fit it on a single line,
+                but is normally 128 characters. To generate a new cryptographically secure secret
+                key you can use the <span class="command"><strong>rake secret</strong></span> task provided by Rails. Changing
+                the <code class="literal">:secret</code> will invalidate all of your existing sessions, so use
+                with caution.</p><div class="comment_container" name="c_sessions_id395215" id="c_sessions_id395215"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395215">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id395251">There are two additional session options specific to the cookie session store:</p><div class="comment_container" name="c_sessions_id395251" id="c_sessions_id395251"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395251">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="variablelist"><dl><dt id="sessions_id395258"><span class="term"><code class="literal">:secret</code></span></dt><dd><p id="sessions_id395266">The secret token used to cryptographically sign the session data with
+                            to prevent tampering. The secret needs to be random and greater than 30
+                            characters in order to prevent dictionary attacks. The best way to
+                            generate a new cryptographically secure secret is to use the <span class="command"><strong>rake secret</strong></span> task provided by Rails. </p><div class="caution"><h3 class="title">Caution</h3><p id="sessions_id395281">Changing the session secret will invalidate all of your existing
+                                sessions.</p></div><p id="sessions_id395287">The secret can also be a <code class="classname">Proc</code> object, for
+                            example: <code class="literal">:secret =&gt; Proc.new { Account.current.secret_key
+                            }</code>.</p></dd><div class="comment_container" name="c_sessions_id395258" id="c_sessions_id395258"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395258">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395301"><span class="term"><code class="literal">:digest</code></span></dt><dd><p id="sessions_id395310">The cryptographic digest algorithm used to verify the integrity of the
+                            session data. Available options include: <code class="literal">DSS</code>,
+                                <code class="literal">DSS1</code>, <code class="literal">MD2</code>, <code class="literal">MD4</code>, <code class="literal">MD5</code>, <code class="literal">MDC2</code>,
+                                <code class="literal">RIPEMD160</code>, <code class="literal">SHA</code>, and <code class="literal">SHA1</code>. If the version of OpenSSL your installation of Ruby
+                            was compiled against is sufficient you may also have access to: <code class="literal">SHA224</code>, <code class="literal">SHA256</code>, <code class="literal">SHA384</code>, and <code class="literal">SHA512</code>. The default is
+                                <code class="literal">SHA1</code>.</p></dd><div class="comment_container" name="c_sessions_id395301" id="c_sessions_id395301"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395301">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title" id="sessions_id395370">Active Record Store</h4></div></div></div><p id="sessions_id395375">To configure your application to use the Active Record session store place the
+                following line in <code class="filename">config/initializers/session_store.rb</code>: </p><div class="comment_container" name="c_sessions_id395375" id="c_sessions_id395375"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395375">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id395385"><pre class="programlisting" id="sessions_id395387">ActionController::Base.session_store = :active_record_store</pre><div class="comment_container" name="c_sessions_id395387" id="c_sessions_id395387"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395387">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id395398">Before you can use the Active Record session store you'll need to generate and run
+                a database migration. Run the following <span class="command"><strong>rake</strong></span> task to generate the
+                migration:</p><div class="comment_container" name="c_sessions_id395398" id="c_sessions_id395398"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395398">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id395408"><pre class="programlisting" id="sessions_id395410">$ rake db:sessions:create</pre><div class="comment_container" name="c_sessions_id395410" id="c_sessions_id395410"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395410">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id395414">The migration creates a <code class="literal">sessions</code> table with <code class="literal">session_id</code>, <code class="literal">data</code>, <code class="literal">created_at</code>, and
+                    <code class="literal">updated_at</code> columns. Run the migration to create the <code class="literal">sessions</code> table in your database:</p><div class="comment_container" name="c_sessions_id395414" id="c_sessions_id395414"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395414">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id395438"><pre class="programlisting" id="sessions_id395440">$ rake db:migrate</pre><div class="comment_container" name="c_sessions_id395440" id="c_sessions_id395440"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395440">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id395444">There is also a <span class="command"><strong>rake</strong></span> task for clearing all sessions in the
+                table:</p><div class="comment_container" name="c_sessions_id395444" id="c_sessions_id395444"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395444">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id395452"><pre class="programlisting" id="sessions_id395454">$ rake db:sessions:clear</pre><div class="comment_container" name="c_sessions_id395454" id="c_sessions_id395454"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395454">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id395458">When using the Active Record session store each session will be stored in your
+                database. If your application gets a lot of traffic there will end up being a
+                substantial number of session stored in the database, which can negatively affect
+                your application's performance. The simplest way to clear out old sessions would be
+                to use <span class="command"><strong>script/runner</strong></span> from a <span class="command"><strong>cron</strong></span> task. The
+                following command run from the root of your Rails project will delete all sessions
+                in the production database that haven't been updated in the past 30 days:</p><div class="comment_container" name="c_sessions_id395458" id="c_sessions_id395458"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395458">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id395478"><pre class="programlisting" id="sessions_id395480">$ script/runner -e production "ActiveRecord::SessionStore::Session.delete_all(
+  [ 'updated_at &lt; ?', 30.days.ago ]
+)"</pre><div class="comment_container" name="c_sessions_id395480" id="c_sessions_id395480"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395480">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title" id="sessions_id395494">Memcached Store</h4></div></div></div><p id="sessions_id395504">To configure your applications to use the Memcached session store place the
+                following line in <code class="filename">config/initializers/session_store.rb</code>: </p><div class="comment_container" name="c_sessions_id395504" id="c_sessions_id395504"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395504">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="sessions_id395513"><pre class="programlisting" id="sessions_id395515">ActionController::Base.session_store = :mem_cache_store</pre><div class="comment_container" name="c_sessions_id395515" id="c_sessions_id395515"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395515">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="sessions_id395526">You'll need to have Memcached servers accessible to your Rails application. See
+                    <a class="xref" href="ch09.html#appendix-memcached-install" title="Memcached">the section called “Memcached”</a> for instructions on setting up
+                Memcached on your machine.</p><div class="comment_container" name="c_sessions_id395526" id="c_sessions_id395526"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395526">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="sessions_id395537">There are several additional session options specific to the Memcached session
+                store:</p><div class="comment_container" name="c_sessions_id395537" id="c_sessions_id395537"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395537">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="variablelist"><dl><dt id="sessions_id395544"><span class="term"><code class="literal">:cache</code></span></dt><dd><p id="sessions_id395553">The <code class="classname">MemCache</code> instance to use instead of
+                            creating a new connection to the servers defined by <code class="literal">:memcache_server</code>. This allows you to reuse an existing
+                            connection to Memcached from elsewhere in your application.</p></dd><div class="comment_container" name="c_sessions_id395544" id="c_sessions_id395544"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395544">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395568"><span class="term"><code class="literal">:failover</code></span></dt><dd><p id="sessions_id395577">Whether or not the client should fail over to another Memcached server
+                            if the first server is unavailable. Defaults to <code class="literal">true</code>.</p></dd><div class="comment_container" name="c_sessions_id395568" id="c_sessions_id395568"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395568">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395588"><span class="term"><code class="literal">:logger</code></span></dt><dd><p id="sessions_id395597">The logger to use for logging debug and info output. Defaults to
+                                <code class="literal">nil</code>. Set to <code class="literal">Rails.logger</code> to
+                            use the same logger as is configured for the rest of your Rails
+                            application.</p></dd><div class="comment_container" name="c_sessions_id395588" id="c_sessions_id395588"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395588">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395613"><span class="term"><code class="literal">:memcache_server</code></span></dt><dd><p id="sessions_id395621">A server or list of Memcached servers to use for storing sessions.
+                            Each server is specified either by its hostname or its hostname and port
+                            in the format of <em class="replaceable"><code>hostname:port</code></em>. Defaults to
+                                <code class="literal">localhost:11211</code>.</p></dd><div class="comment_container" name="c_sessions_id395613" id="c_sessions_id395613"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395613">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395637"><span class="term"><code class="literal">:namespace</code></span></dt><dd><p id="sessions_id395646">The Memcached namespace to store the sessions under. Defaults to
+                                <code class="literal">rack.session</code>.</p></dd><div class="comment_container" name="c_sessions_id395637" id="c_sessions_id395637"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395637">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="sessions_id395656"><span class="term"><code class="literal">:timeout</code></span></dt><dd><p id="sessions_id395665">The time-out to use for socket reads. Defaults to <code class="literal">0.5</code> seconds. You can set the time-out to <code class="literal">nil</code> to disable time-outs, however this is not
+                        recommended.</p></dd><div class="comment_container" name="c_sessions_id395656" id="c_sessions_id395656"><p class="comment_count">
+          <a class="comment_count" href="ch02.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_sessions_id395656">
+
+
+        <h4><a href="ch02.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div></div></div></div></div><!-- Comment form -->
+
+   <div id="comment_form_main" class="comment_form">
+
+
+<h5>You must sign in or <a href="register.html">register</a> before commenting</h5>
+
+  <form action="signin.html" method="post"><table>
+     <tr class="field">
+<td class="label" valign="top"><label>Username:</label></td>
+<td class="field" colspan="2" valign="top"><input id="username" name="username" type="text" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input name="redirect_to" type="hidden" value="http://rails-nutshell.labs.oreilly.com/ch02.html" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input name="xml_id" type="hidden" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label>Password:</label></td>
+<td class="field" colspan="2" valign="top"><input id="password" name="password" type="password" /></td>
+</tr>
+  <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input id="submit" name="submit" type="submit" value="Sign in" /></td>
+</tr>
+  </table></form>
+
+
+
+</div>
+
+
+<div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch01.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 1. Rails </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 3. Active Record</td></tr></table></div><div class="footer-copyright"></div></body></html>
