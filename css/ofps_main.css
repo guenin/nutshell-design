@@ -102,7 +102,7 @@ p {
 /* No <tt>s are produced by the XHTML DocBook-XSL output, but we'll be safe... */
 pre, code, tt { 
   font-family: Consolas, 'Bitstream Vera Sans Mono', 'andale mono','lucida console',monaco,monospace;
-  font-size: 0.875em; /* 16x0.875=14px */
+  font-size: 1em;
 }
 pre {
   background: #F2F2F2;
