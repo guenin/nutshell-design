@@ -34,21 +34,29 @@ body > div {
   max-width: 60em;
   margin-right: auto;
   margin-left: auto;
-  padding: 2.5em 3em;
+  padding: 0 3em 2.5em;
+}
+
+.author {
+  margin: 0;
+  color: black;
+}
+
+.authorgroup {
+  text-indent: 1em;
 }
 
 .navheader, .navfooter {
-  /*
   margin: 0;
-  */
+  padding: 1em 0 0;
 }
-.navheader {
-  margin-top: 1em;
-}
+/*.navheader {
+  margin: 1em 0 0 0;
+}*/
 
 h1, h2, h3, h4, h5 {
   color: #990000;
-  font-family: Lucida Bright, Constantia, Georgia, serif;
+  /*font-family: Lucida Bright, Constantia, Georgia, serif;*/
   font-weight: normal; 
 }
 
@@ -110,6 +118,14 @@ a:hover {
 
 .toc dl {
   margin: 0;
+}
+
+.navheader table tbody tr th {
+  font-size: 28px;
+}
+
+.toc dl dd dl dd {
+  margin-left: 26px;
 }
 
 /* DocBook Inlines */
