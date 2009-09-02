@@ -61,6 +61,10 @@ body > div {
   padding: 1em;
 }
 
+.navheader {
+  margin-bottom: 0.5em;
+}
+
 .navfooter {
   margin-top: 0.5em;
 }
