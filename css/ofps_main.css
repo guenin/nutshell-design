@@ -48,8 +48,7 @@ body > div {
   border-bottom: 1px solid #fff; /* fix overflow bug */
 }
 .navfooter {
-  padding-bottom: 1em;
-  margin-bottom: 1em;
+  padding-top: 1em;
 }
 .navheader th,
 .navfooter td {
