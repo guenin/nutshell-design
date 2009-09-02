@@ -52,15 +52,20 @@ body > div {
 
 .chapter h2.title,
 .chapter h3.title,
-.chapter h4.title {
+.chapter h4.title,
+.refentry h2.title,
+.refentry h3.title,
+.refentry h4.title {
   margin: 0;
 }
 
-.chapter p {
+.chapter p,
+.refentry p {
   margin: 4px 0 1em;
 }
 
-.chapter {
+.chapter,
+.refentry {
   width: 32em;
 }
 
@@ -158,30 +163,30 @@ a:hover {
   margin-left: 26px;
 }
 
-.chapter .sect1 table {
+.sect1 table {
   margin-right: auto;
   margin-left: auto;
 }
 
-.chapter .sect1 table tr td{
+.sect1 table tr td{
   padding-right: 18px;
 }
 
-.chapter ul {
+ul {
   list-style-type: none;
 }
 
-.chapter .comment_container {
+.comment_container {
   position: relative;
 }
 
-.chapter .comment_container p.comment_count {
+.comment_container p.comment_count {
   position: absolute;
   right: -121px;
-  bottom: 3px;
+  bottom: 4px;
 }
 
- DocBook Inlines 
+/* DocBook Inlines */
 .term {
   font-weight:bold;
 }
