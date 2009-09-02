@@ -34,7 +34,7 @@ body > div {
   max-width: 560px;
   margin-right: auto;
   margin-left: auto;
-  padding: 2em;
+  padding: 0 2em 2em;
   background: #fff;
 }
 
