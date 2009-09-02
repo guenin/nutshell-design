@@ -43,6 +43,14 @@ body > div {
   color: black;
 }
 
+.chapter .sect1 .titlepage div div h2.title {
+  margin: 0;
+}
+
+.chapter {
+  width: 32em;
+}
+
 .navheader, .navfooter {
   margin: 0;
   padding: 1em 0 0 0;
