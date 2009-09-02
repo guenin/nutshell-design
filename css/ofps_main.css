@@ -42,8 +42,14 @@ body > div {
   color: black;
 }
 
-.chapter .sect1 .titlepage div div h2.title {
+.chapter h2.title,
+.chapter h3.title,
+.chapter h4.title {
   margin: 0;
+}
+
+.chapter p {
+  margin: 4px 0 1em;
 }
 
 .chapter {
@@ -105,8 +111,9 @@ pre, code, tt {
 }
 pre {
   background: #F2F2F2;
-  padding: 0.5em;
-  margin: 1em; /* 14x1=14px */
+  /*padding: 0.5em;*/
+  margin: 1em;
+  padding: 4px 8px;
 }
 
 /* Links */
@@ -220,6 +227,7 @@ a:hover {
   width: 70%;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 1em;
   padding: 0.5em 1em 0.5em 1em;
 }
 
