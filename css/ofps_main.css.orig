@@ -1,0 +1,362 @@
+/* @override http://johng.github.com/nutshell-design/css/ofps_main.css */
+
+/* Color Scheme:
+   Tetrad around oreilly.com red #990000
+
+Primary Color (red):
+  990000    731D1D    630000    CC3333    CC5C5C
+Secondary Color A (orange):
+  994500    73441D    632D00    CC7833    CC8F5C  F3E3D6
+Secondary Color B (blue):
+  005C5C    114545    003C3C    2BADAD    4EADAD    95D7D6 D6F3F2
+Complementary Color (green):
+  007A00    175C17    005000    2FBD2F    55BD55   D6F3D6
+
+via http://colorschemedesigner.com/
+*/
+
+html {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Font Selection & Headings */
+body {
+  font: 100%/1.5 Calibri, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: #eee;
+  color: #333;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body > div {
+  margin-top: 0;
+  max-width: 42em;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 2em;
+  background: #fff;
+}
+
+.navheader table,
+.navfooter table {
+  width: 550px;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: large;
+}
+
+.author {
+  margin: 0;
+  color: black;
+}
+<<<<<<< HEAD
+.navheader {
+  margin-top: 1em;
+  padding-bottom: 0;
+  border-bottom: 1px solid #fff; /* fix overflow bug */
+}
+.navfooter {
+  padding-bottom: 1em;
+  margin-bottom: 1em;
+}
+.navheader th,
+.navfooter td {
+  color: #999;
+}
+
+.navheader, .navfooter {
+=======
+
+.chapter h2.title,
+.chapter h3.title,
+.chapter h4.title,
+.refentry h2.title,
+.refentry h3.title,
+.refentry h4.title {
+  margin: 0;
+}
+
+.chapter p,
+.refentry p {
+  margin: 4px 0 1em;
+  width: 30em;
+}
+
+.chapter,
+.refentry {
+  width: 35em;
+}
+
+.navheader, .navfooter {
+  margin: 0;
+  padding: 1em;
+}
+
+.navheader {
+  margin-bottom: 0.5em;
+}
+
+.navfooter {
+  margin-top: 0.5em;
+>>>>>>> 14a581db4c26c0ba1c33045c34370fec854c13f2
+}
+
+h1, h2, h3, h4, h5 {
+  color: #000;
+  font-family: Lucida Bright, Constantia, Georgia, serif;
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 4em;
+  line-height: 1em;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.75em; /* 16x1.25=20px */
+  margin:2em 0 1em; /* 18x1=18px */
+  line-height: 1em;
+}
+
+h3 {
+  font-size: 1.125em; /* 16x1.125=18px */
+  margin:2em 0 1em; /* 18x1=18px */
+}
+
+h4 {
+  font-size: 1.0625em; /* 16x1.0625=17px */
+  margin:2em 0 1em; /* 18x1=18px */
+}
+
+h1.title {
+  margin: 0 0 0.5em 0;
+  line-height: 1em;
+}
+
+h2.title {
+  margin-top: 0;
+}
+
+.author h3 {
+  margin: 0;
+  text-align: center;
+}
+
+/* Basic fonts and margins for paragraphs and code */
+p {
+  font-size: 1em; /* 16x1=16px */
+  line-height: 1.2em;
+  margin: 1em 0; /* 14x1=14px */
+}
+
+/* No <tt>s are produced by the XHTML DocBook-XSL output, but we'll be safe... */
+pre, code, tt { 
+  font-family: Consolas, 'Bitstream Vera Sans Mono', 'andale mono','lucida console',monaco,monospace;
+  font-size: 1em;
+}
+pre {
+  background: #F2F2F2;
+  padding: 1em;
+  margin: 1em 0;
+  border: 1px solid #ddd;
+}
+
+/* Links */
+a, a:visited {
+  text-decoration: none;
+}
+
+a {
+  color: #2e74e5;
+}
+a:active,
+a:focus {
+  color: #2358b0;
+}
+
+a:visited {
+  color: #87388c;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.toc dl {
+  margin: 0;
+}
+
+.navheader table tbody tr th {
+
+}
+
+.toc dl dd dl dd {
+  margin-left: 26px;
+}
+
+.sect1 table {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.sect1 table tr td{
+  padding-right: 18px;
+}
+
+ul {
+  list-style-type: none;
+}
+
+.comment_container {
+  position: relative;
+}
+
+.comment_container p.comment_count {
+  position: absolute;
+  right: -121px;
+  bottom: 4px;
+}
+
+/* DocBook Inlines */
+.term {
+  font-weight:bold;
+}
+
+/* Tables */
+.table-contents > table {
+  border: thin solid black;
+  width: auto;
+}
+
+.table-contents th, .table-contents td  {
+  padding: 0.5em;
+  margin: 0;
+  border-spacing: 0;
+}
+
+.table-contents p {
+  margin: 0;
+  padding: 0;
+}
+
+.table-contents pre {
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* DocBook Blocks */
+.sidebar {
+  background-color: #D6F3F2;
+  border: thin solid black;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.5em 1em 0.5em 1em;
+}
+
+.sidebar > p.title {
+  text-align: center;
+}  
+
+.tip {
+  background-color: #D6F3D6;
+  border: 1px solid #7cc47c;
+}
+
+.note {
+  background-color: #f2f2d5;
+  border: 1px solid #c4c47c;
+}
+
+
+.warning {
+  background-color: #F3E3D6;
+}
+
+.note > .title, .tip > .title, .warning > .title {
+  font-family: inherit;
+  margin-top: 0;
+  color: black;
+  opacity: 0.6;
+}
+
+.note, .tip, .warning {
+  margin: 2em auto;
+  padding: 2em;
+}
+
+/* DocBook Figures */
+.figure {
+  padding: 1em;
+  margin-left: 3em;
+}
+.mediaobject {
+  padding: 0.6em;
+}
+
+.figure > p {
+  padding: 0;
+}
+
+/* Misc */
+.footer-copyright {
+  text-align: center;
+  background: transparent;
+}  
+
+
+.oreilly-header { 
+  height: 32px;
+  background-image: url(/oreilly-header.jpg);
+  background-repeat: repeat-x;
+  margin:0;  
+  padding:0 0 0 52px;
+}
+
+.oreilly-header p { 
+  text-transform:uppercase;
+  font-size: 11px;
+  color: rgb(169,169,169);
+  margin:0;  
+  padding:0;
+  line-height: normal:
+}
+
+.oreilly-header a { 
+  color: rgb(214,214,214) !important;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+}
+
+.oreilly-header img { 
+  border: 0; 
+  margin: 0; 
+  padding: 0;
+  display: block; 
+  float: left;
+  padding-right: 30px;
+
+}
+
+.table-contents table {
+  border-collapse: collapse;
+  border-color: #ccc;
+  border-style: solid;
+  border-width: 1px;
+}
+
+.table-contents table th {
+  background: #eee;
+}
+
+hr {
+  margin: 1em 0;
+  background-color: #eee;
+  border-top: 1px solid #ccc;
+  border-width: 1px 0 0 0;
+}
