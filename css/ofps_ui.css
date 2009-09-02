@@ -89,6 +89,7 @@ div.comment ol li {
 
 .oreilly-header ul li p { 
   display: inline;
+  line-height: 32px;
 }  
 
 .oreilly-header a { 

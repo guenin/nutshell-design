@@ -31,9 +31,10 @@ body {
 
 body > div {
   margin-top: 0;
+  max-width: 42em;
   margin-right: auto;
   margin-left: auto;
-  padding: 1em;
+  padding: 2em;
   background: #fff;
 }
 
@@ -41,33 +42,30 @@ body > div {
   margin: 0;
   color: black;
 }
-
-.chapter h2.title,
-.chapter h3.title,
-.chapter h4.title {
-  margin: 0;
+.navheader {
+  margin-top: 1em;
+  padding-bottom: 0;
+  border-bottom: 1px solid #fff; /* fix overflow bug */
 }
-
-.chapter p {
-  margin: 4px 0 1em;
+.navfooter {
+  padding-bottom: 1em;
+  margin-bottom: 1em;
 }
-
-.chapter {
-  width: 32em;
+.navheader th,
+.navfooter td {
+  color: #999;
 }
 
 .navheader, .navfooter {
-  margin: 0;
-  padding: 1em 0 0 0;
 }
 /*.navheader {
   margin: 1em 0 0 0;
 }*/
 
 h1, h2, h3, h4, h5 {
-  color: #990000;
-  /*font-family: Lucida Bright, Constantia, Georgia, serif;*/
-  font-weight: normal; 
+  color: #000;
+  font-family: Lucida Bright, Constantia, Georgia, serif;
+  font-weight: bold;
 }
 
 h1 {
@@ -78,8 +76,9 @@ h1 {
 }
 
 h2 {
-  font-size: 1.25em;
-  margin-bottom: 0.4em;
+  font-size: 1.75em; /* 16x1.25=20px */
+  margin:2em 0 1em; /* 18x1=18px */
+  line-height: 1em;
 }
 
 h3 {
@@ -90,6 +89,15 @@ h3 {
 h4 {
   font-size: 1.0625em; /* 16x1.0625=17px */
   margin:2em 0 1em; /* 18x1=18px */
+}
+
+h1.title {
+  margin: 0 0 0.5em 0;
+  line-height: 1em;
+}
+
+h2.title {
+  margin-top: 0;
 }
 
 .author h3 {
@@ -111,9 +119,9 @@ pre, code, tt {
 }
 pre {
   background: #F2F2F2;
-  /*padding: 0.5em;*/
-  margin: 1em;
-  padding: 4px 8px;
+  padding: 1em;
+  margin: 1em 0;
+  border: 1px solid #ddd;
 }
 
 /* Links */
@@ -122,11 +130,15 @@ a, a:visited {
 }
 
 a {
-  color: #00f;
+  color: #2e74e5;
+}
+a:active,
+a:focus {
+  color: #2358b0;
 }
 
 a:visited {
-  color: #551A8B;
+  color: #87388c;
 }
 
 a:hover {
@@ -138,7 +150,7 @@ a:hover {
 }
 
 .navheader table tbody tr th {
-  font-size: 28px;
+
 }
 
 .toc dl dd dl dd {
@@ -210,25 +222,31 @@ a:hover {
   text-align: center;
 }  
 
-.note, .tip {
+.tip {
   background-color: #D6F3D6;
+  border: 1px solid #7cc47c;
 }
+
+.note {
+  background-color: #f2f2d5;
+  border: 1px solid #c4c47c;
+}
+
 
 .warning {
   background-color: #F3E3D6;
 }
 
 .note > .title, .tip > .title, .warning > .title {
-  margin-left: 2em;
+  font-family: inherit;
+  margin-top: 0;
   color: black;
+  opacity: 0.6;
 }
 
 .note, .tip, .warning {
-  width: 70%;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 1em;
-  padding: 0.5em 1em 0.5em 1em;
+  margin: 2em auto;
+  padding: 2em;
 }
 
 /* DocBook Figures */
@@ -247,6 +265,7 @@ a:hover {
 /* Misc */
 .footer-copyright {
   text-align: center;
+  background: transparent;
 }  
 
 
@@ -287,11 +306,16 @@ a:hover {
   border-collapse: collapse;
   border-color: #ccc;
   border-style: solid;
-  border-width: 3px;
+  border-width: 1px;
 }
 
 .table-contents table th {
   background: #eee;
-  border-style: solid;
-  border-bottom-width: 3px;
+}
+
+hr {
+  margin: 1em 0;
+  background-color: #eee;
+  border-top: 1px solid #ccc;
+  border-width: 1px 0 0 0;
 }
