@@ -62,11 +62,12 @@ body > div {
 .chapter p,
 .refentry p {
   margin: 4px 0 1em;
+  width: 30em;
 }
 
 .chapter,
 .refentry {
-  width: 32em;
+  width: 35em;
 }
 
 .navheader, .navfooter {
@@ -89,9 +90,10 @@ h1, h2, h3, h4, h5 {
 }
 
 h1 {
-  font-size: 2em;
-  line-height: 2em;/* 16x1.636=36px */
+  font-size: 4em;
+  line-height: 1em;
   margin: 0;
+  padding: 0;
   text-align: center;
 }
 
