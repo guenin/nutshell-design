@@ -20,7 +20,9 @@ html {
 
 /* Font Selection & Headings */
 body {
-  font-family: sans-serif;
+  font: 100%/1.5 Calibri, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: #fff;
+  color: #333;
   margin: 0 !important;
   padding: 0 !important;
 }
@@ -30,6 +32,7 @@ body > div {
   max-width: 60em;
   margin-right: auto;
   margin-left: auto;
+  padding: 2.5em 3em;
 }
 
 .navheader, .navfooter {
@@ -43,8 +46,8 @@ body > div {
 
 h1, h2, h3, h4, h5 {
   color: #990000;
-  font-family:serif;
-  font-weight: bold; 
+  font-family: Lucida Bright, Constantia, Georgia, serif;
+  font-weight: normal; 
 }
 
 h1 {
@@ -77,7 +80,7 @@ p {
 
 /* No <tt>s are produced by the XHTML DocBook-XSL output, but we'll be safe... */
 pre, code, tt { 
-  font-family:'andale mono','lucida console',monaco,monospace;
+  font-family: Consolas, 'Bitstream Vera Sans Mono', 'andale mono','lucida console',monaco,monospace;
   font-size: 0.875em; /* 16x0.875=14px */
 }
 pre {
