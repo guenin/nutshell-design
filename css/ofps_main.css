@@ -149,7 +149,7 @@ dl {
 }
 
 .navheader table tbody tr th {
-
+  display: none;
 }
 
 .toc dl dd dl dd {
