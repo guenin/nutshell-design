@@ -1,3 +1,5 @@
+/* @override http://johng.github.com/nutshell-design/css/ofps_main.css */
+
 /* Color Scheme:
    Tetrad around oreilly.com red #990000
 
@@ -104,6 +106,10 @@ a:visited {
 
 a:hover {
   text-decoration: underline;
+}
+
+.toc dl {
+  margin: 0;
 }
 
 /* DocBook Inlines */
