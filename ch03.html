@@ -1,0 +1,798 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="js/jquery-1.3.2.min.js" type="text/javascript"></script>
+    
+    <script src="js/openfeedback.js" type="text/javascript"></script>
+        
+
+    <link rel="alternate" type="application/atom+xml" title="Comments on this page" href="comments/feed/ch03.html" />
+    <link rel="alternate" type="application/atom+xml" title="All comments on Rails in a Nutshell" href="comments/feed%3Fid=book" />
+
+        <title>Chapter 3. Active Record</title><link rel="stylesheet" href="css/ofps_main.css" type="text/css" /><link rel="stylesheet" href="css/ofps_ui.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.74.3" /><link rel="home" href="index.html" title="Rails in a Nutshell" /><link rel="up" href="index.html" title="Rails in a Nutshell" /><link rel="prev" href="ch02.html" title="Chapter 2. Action Controller" /><link rel="next" href="ch04.html" title="Chapter 4. Active Resource" /></head><body><div class="oreilly-header"><ul><li><p><a href="http://oreilly.com/"><img alt="O'Reilly Logo" src="oreilly-logo.jpg" /></a></p></li><li><p id="oreilly-breadcrumbs"><a href="http://labs.oreilly.com/">Labs</a> &gt; <a href="http://labs.oreilly.com/ofps.html">OFPS</a> &gt; <a href="index.html">Rails in a Nutshell</a></p></li><li><p class="login">
+
+          <a href="signin.html">Sign-in</a> or 
+          <a href="register.html">Register</a>
+
+            </p></li><li><p class="ofps-show-hide-all-comments"><a href="ch03.html#" class="ofps-show-hide-all-comments-toggle">Show all comments</a></p></li><li><p><a href="http://labs.oreilly.com/ofps.html">Help</a></p></li></ul></div><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 3. Active Record</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ch04.html">Next</a></td></tr></table><hr /></div><div class="chapter" lang="en" id="activerecord_id347149" xml:lang="en"><div class="titlepage"><div><div><h2 class="title">Chapter 3. Active Record</h2></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activerecord_id62821">Connecting to a Database</h2></div></div></div><p id="activerecord_id62827">Before Active Record can work any of its ORM magic, it needs
+            to know what kind of database it will be working with, and how it's going to connect to
+            that database. In a Rails application, this involves a small configuration file located
+            at <code class="filename">config/database.yml</code>. Rails loads the options defined in this
+            file, stores them in a hash accessible as <code class="varname">ActiveRecord::Base.configurations</code>, and uses them to establish its database
+            connections. By default, a freshly generated app starts off with a simple database setup
+            that lets you get up and running without any manual configuration. Here's how the
+            untouched <code class="filename">database.yml</code> looks:</p><div class="comment_container" name="c_activerecord_id62827" id="c_activerecord_id62827"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id62827">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id66089"><pre class="programlisting" id="activerecord_id318907"># SQLite version 3.x
+#   gem install sqlite3-ruby (not necessary on OS X Leopard)
+development:
+  adapter: sqlite3
+  database: db/development.sqlite3
+  pool: 5
+  timeout: 5000
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  adapter: sqlite3
+  database: db/test.sqlite3
+  pool: 5
+  timeout: 5000
+
+production:
+  adapter: sqlite3
+  database: db/production.sqlite3
+  pool: 5
+  timeout: 5000
+</pre><div class="comment_container" name="c_activerecord_id318907" id="c_activerecord_id318907"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id318907">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id318916">The <span class="property">adapter</span> properties here are set so
+            that each application environment gets its own SQLite3 database to work with. You will
+            need to have the <code class="literal">sqlite3-ruby</code> gem installed before things can work
+            properly. SQLite3 stores databases as single files with locations indicated by the
+                <span class="property">database</span> property of each environment's configuration, and each
+            database is created automatically if it doesn't already exist. The <span class="property">pool</span> property determines the maximum number of database connections in
+            Active Record's connection pool. The <span class="property">timeout</span> property is specific
+            to the SQLite3 adapter and is discussed in <a class="xref" href="ch03.html">???</a>.</p><div class="comment_container" name="c_activerecord_id318916" id="c_activerecord_id318916"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id318916">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id348712">If you want a new Rails application to be generated with
+            defaults for some other database adapter, you can use the <code class="option">--database</code>
+            option:</p><div class="comment_container" name="c_activerecord_id348712" id="c_activerecord_id348712"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id348712">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id62858"><pre class="programlisting" id="activerecord_id62860">$ rails myapp --database=mysql</pre><div class="comment_container" name="c_activerecord_id62860" id="c_activerecord_id62860"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id62860">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id62865">This will produce a different <code class="filename">database.yml</code> because the MySQL adapter works differently and requires a
+            different set of information to manage its connections. The options for each adapter's
+            configuration are detailed in <a class="xref" href="ch03.html">???</a>.</p><div class="comment_container" name="c_activerecord_id62865" id="c_activerecord_id62865"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id62865">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id332922">Unless you are using one of the SQLite adapters, you will
+            probably have to create your application's databases manually. Thankfully Rails provides
+            a <span class="command"><strong>rake</strong></span> task which nicely wraps this chore into a single command:</p><div class="comment_container" name="c_activerecord_id332922" id="c_activerecord_id332922"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id332922">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id332933"><pre class="programlisting" id="activerecord_id332935">$ rake db:create</pre><div class="comment_container" name="c_activerecord_id332935" id="c_activerecord_id332935"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id332935">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id332939">Like many <span class="command"><strong>rake</strong></span> tasks in Rails, <code class="option">db:create</code> looks at the <code class="envar">RAILS_ENV</code> environment variable to
+            determine which application environment to operate on, and defaults to working withe
+            development environment. This means that the above command would create the development
+            environment's database, with a name (or filename, in the case of SQLite databases) equal
+            to the value of <code class="code">ActiveRecord::Base.configurations['development']['database']</code>. If you want to
+            create databases for all of the environments listed in <code class="filename">database.yml</code>
+            in one fell swoop, there's a <span class="command"><strong>rake</strong></span> task for that too:</p><div class="comment_container" name="c_activerecord_id332939" id="c_activerecord_id332939"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id332939">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id324859"><pre class="programlisting" id="activerecord_id324861">$ rake db:create:all</pre><div class="comment_container" name="c_activerecord_id324861" id="c_activerecord_id324861"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id324861">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="tip"><h3 class="title">Tip</h3><p id="activerecord_id324867">Each Rails environment uses a completely separate
+                database configuration, so each could use a different database adapter if that's
+                what you want. For example you might find it most convenient to use SQLite3 for
+                development, but want some features of PostgreSQL for your live application. The
+                downside to this kind of setup is that differences in the way various database
+                adapters work can remain hidden while you work in development mode, only to produce
+                surprise results in a production environment. As a general rule, it is wise to keep
+                the configurations of your various environments as close to one another as
+            possible.</p><div class="comment_container" name="c_activerecord_id324867" id="c_activerecord_id324867"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id324867">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activerecord_id324873">A Model's Names</h2></div></div></div><p id="activerecord_id324878">Part of Rails' convention-over-configuration approach
+            involves naming things in unsurprising ways so that the framework doesn't need to be
+            told how to find things. Each ActiveRecord model in a Rails application is a subclass of
+                <code class="classname">ActiveRecord::Base</code>, and it should follow the ruby convention
+            of having capitalized CamelCase class names. The model's filename should be like the
+            class name, but all in underscored lowercase. So a <code class="classname">School</code> model
+            would be defined in <code class="filename">school.rb</code>, and a <code class="classname">CourseEnrollment</code> model would be defined in <code class="filename">course_enrollment.rb</code>.</p><div class="comment_container" name="c_activerecord_id324878" id="c_activerecord_id324878"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id324878">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id63678">The other name associated with a model is its database table
+            name, which is like the file's base name but also <span class="italic">pluralized</span>. <code class="classname">School</code> records live in the <span class="database">schools</span> table; <code class="classname">CourseEnrollment</code> records live in
+            the <span class="database">course_enrollments</span> table.</p><div class="comment_container" name="c_activerecord_id63678" id="c_activerecord_id63678"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id63678">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activerecord_id339861">Developing your Database Schema with Migrations</h2></div></div></div><p id="activerecord_id339867">After your application has a database to work with, you can
+            start populating it with the tables and columns that define the foundation of your data
+            model: the schema. The primary means of developing the schema is by creating a number of
+            small Ruby files called migrations. A typical Rails application will end up with a
+            growing number of migrations as development progresses and the schema evolves. Each
+            migrations forms a link in a sequential chain of alterations to the database schema. The
+            migration files are stored in <code class="filename">db/migrate</code> and each one usually
+            consists of just a single class with two method definitions: <code class="methodname">up</code>
+            and <code class="methodname">down</code>. Here's what we get when we run the migration
+            generator:</p><div class="comment_container" name="c_activerecord_id339867" id="c_activerecord_id339867"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id339867">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id329738"><pre class="programlisting" id="activerecord_id329740">$ script/generate migration CreateUsersAndClouds
+      create  db/migrate
+      create  db/migrate/20090610033819_create_users_and_clouds.rb</pre><div class="comment_container" name="c_activerecord_id329740" id="c_activerecord_id329740"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id329740">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id329749">We gave the generator the name of the migration, and it
+            created a single file for us. The long string of numbers at the beginning of the
+            filename is a timestamp from whenever the migration is generated. This is how Rails
+            maintains a consistent ordering of migrations and keeps track of which migrations have
+            already been run. Here is the migration skeleton which has been generated for us:</p><div class="comment_container" name="c_activerecord_id329749" id="c_activerecord_id329749"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id329749">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id329760"><pre class="programlisting" id="activerecord_id329762">class CreateUsersAndClouds &lt; ActiveRecord::Migration
+  def self.up
+  end
+
+  def self.down
+  end
+end
+</pre><div class="comment_container" name="c_activerecord_id329762" id="c_activerecord_id329762"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id329762">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id329773">The file contains a subclass of <code class="classname">ActiveRecord::Migration</code> using the name we passed to the generator. The
+                <code class="methodname">up</code> method is going to contain the changes we want to make
+            to our schema; the <code class="methodname">down</code> method is going define how those
+            changes can be undone. The application we're creating here is going to allow people to
+            contribute <acronym class="acronym">URL</acronym>s to images of clouds on the web, and to enter</p><div class="comment_container" name="c_activerecord_id329773" id="c_activerecord_id329773"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id329773">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id329797">Here, we want to create a table for users of the
+            application and </p><div class="comment_container" name="c_activerecord_id329797" id="c_activerecord_id329797"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id329797">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activerecord_id341310">Associations</h2></div></div></div><p id="activerecord_id68714">One of the key differences between relational databases and
+            object-oriented systems is the way that hierarchical data is represented. In an
+            object-oriented program, a <code class="classname">School</code> object might have many
+                <code class="classname">Student</code> objects associated with it, with the <code class="classname">School</code> keeping track of its <code class="classname">Student</code>s by storing
+            references to them in a collection object of some kind. In a relational database,
+            however, it is the child entities which keep track of the parents: each row in the
+                <span class="database">students</span> table would reference an associated row in the
+                <span class="database">schools</span> table by storing its school's primary key in a special
+            column in the <span class="database">students</span> table. As long as an index is maintained for
+            the foreign key column, queries to find either a particular student's school or a
+            particular school's students can be completed very quickly without the database having
+            to look at each student row one at a time.</p><div class="comment_container" name="c_activerecord_id68714" id="c_activerecord_id68714"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id68714">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id341970">This is a very good thing, but it can be very unintuitive
+            for object-oriented programmers to suddenly have to think about relationships in this
+            way. Wouldn't it be nice if we could just type out <code class="code">school.students</code> and get
+            back what we expect? Yes it would, and here's how you do it with ActiveRecord:</p><div class="comment_container" name="c_activerecord_id341970" id="c_activerecord_id341970"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id341970">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id341982"><pre class="programlisting" id="activerecord_id341984">class School &lt; ActiveRecord::Base
+  has_many :students
+end</pre><div class="comment_container" name="c_activerecord_id341984" id="c_activerecord_id341984"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id341984">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id341991">Besides the <span class="database">schools</span> table itself, all
+            this requires is a <span class="database">students</span> table with a column called <span class="property">school_id</span>. The <code class="methodname">has_many</code> method is a class
+            method on <code class="classname">ActiveRecord::Base</code> which, among other things,
+            dynamically defines a public instance method on <code class="classname">School</code> called
+                <code class="methodname">students</code>. This method returns an array-like object which
+            gives access to all the student records which have the school's <span class="property">id</span>
+            in their <span class="property">school_id</span> column.</p><div class="comment_container" name="c_activerecord_id341991" id="c_activerecord_id341991"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id341991">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="note"><h3 class="title">Note</h3><p id="activerecord_id342031">The object returned by the <code class="methodname">students</code> method <span class="emphasis"><em>looks</em></span> a whole lot like a standard
+                Ruby <code class="classname">Array</code>:</p><div class="comment_container" name="c_activerecord_id342031" id="c_activerecord_id342031"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id342031">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id346813"><pre class="programlisting" id="activerecord_id346815">school = School.first
+# =&gt; #&lt;School id: 1, name: "Lisgar Collegiate Institute"&gt;
+
+school.students[0..1].map(&amp;:name)
+# =&gt; ["Jimmy", "Jane"]
+
+school.students.class
+# =&gt; Array
+</pre><div class="comment_container" name="c_activerecord_id346815" id="c_activerecord_id346815"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id346815">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id346824">But beware: even while that object tells you with a
+                straight face that it's an <code class="classname">Array</code>, <span class="emphasis"><em>it is lying to
+                    you</em></span>. Most of the time you can treat it like an <code class="classname">Array</code> and you wouldn't notice the difference, but really it is an
+                instance of <code class="classname">ActiveRecord::Associations::AssociationProxy</code> with
+                a lot more smarts behind it than a simple <code class="classname">Array</code>. It's good to
+                keep this in mind when that association object doesn't behave quite the way you
+                expect it to.</p><div class="comment_container" name="c_activerecord_id346824" id="c_activerecord_id346824"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id346824">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id346853">By calling the <code class="methodname">has_many</code> method in
+            the <code class="classname">School</code> class, we are <span class="emphasis"><em>defining an
+            association</em></span> on that class, and Active Record does a fair bit of work behind
+            the scenes to keep track of the association and provide convenient ways for you to
+            manage a record's relationships with other records. In order to get the same kind of
+            convenience on the other side of the school-student relationship, we would make a
+            similar declaration in the <code class="classname">Student</code> class:</p><div class="comment_container" name="c_activerecord_id346853" id="c_activerecord_id346853"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id346853">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id346869"><pre class="programlisting" id="activerecord_id319287">class Student &lt; ActiveRecord::Base
+  belongs_to :school
+end</pre><div class="comment_container" name="c_activerecord_id319287" id="c_activerecord_id319287"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id319287">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="note"><h3 class="title">Note</h3><p id="activerecord_id319296">Associations don't really need to be reciprocated; that
+                is, a <code class="methodname">has_many</code> declaration does not need a corresponding
+                    <code class="methodname">belongs_to</code> in the associated model in order to function
+                correctly. It usually makes things easier if you declare both sides of an
+                association, though, especially when other developers are exploring your
+            code.</p><div class="comment_container" name="c_activerecord_id319296" id="c_activerecord_id319296"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id319296">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="activerecord_id319312">belongs_to</h3></div></div></div><p id="activerecord_id319318">The <code class="methodname">belongs_to</code> association is
+                defined on the model with the foreign key column in its table. This declaration is
+                used for both one-to-one and one-to-many associations; a model with a <code class="methodname">belongs_to</code> declaration doesn't care whether or not there are other
+                records in its table with the same foreign key. Continuing the example above, the
+                    <code class="classname">Student</code> class would get the following instance methods
+                when its <code class="methodname">belongs_to</code> class method is called with <code class="code">:school</code>:</p><div class="comment_container" name="c_activerecord_id319318" id="c_activerecord_id319318"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id319318">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="variablelist"><dl><dt id="activerecord_id112549"><span class="term"><code class="methodname">school</code></span></dt><dd><p id="activerecord_id336937">Returns a <code class="classname">School</code>
+                            object representing the associated school record in the database; that
+                            is, the school with an <span class="property">id</span> equal to the <span class="property">school_id</span> attribute in the <code class="classname">Student</code> object. Returns <code class="constant">nil</code> if no
+                            record is found.</p></dd><div class="comment_container" name="c_activerecord_id112549" id="c_activerecord_id112549"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id112549">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="activerecord_id111776"><span class="term"><code class="methodname">school=(new_school)</code></span></dt><dd><p id="activerecord_id62684">Assigns the given <code class="classname">School</code> object to the <code class="classname">Student</code>
+                            object's association and sets the <span class="property">school_id</span> of the
+                            student to the <span class="property">id</span> of the school.</p></dd><div class="comment_container" name="c_activerecord_id111776" id="c_activerecord_id111776"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id111776">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="activerecord_id100818"><span class="term"><code class="methodname">build_school(attributes)</code></span></dt><dd><p id="activerecord_id314678">Initializes a new <code class="classname">School</code> object with the given attributes and assigns it to
+                            the <code class="classname">Student</code>, but does not save the newly built
+                            object. Since the unsaved school doesn't yet have a primary key assigned
+                            from the database, the student's <span class="property">school_id</span> is left
+                            untouched until both halves of the association are saved.</p></dd><div class="comment_container" name="c_activerecord_id100818" id="c_activerecord_id100818"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id100818">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="activerecord_id113350"><span class="term"><code class="methodname">create_school(attributes)</code></span></dt><dd><p id="activerecord_id329196">Like <code class="methodname">build_school</code>,
+                            but saves both objects in the association.</p></dd><div class="comment_container" name="c_activerecord_id113350" id="c_activerecord_id113350"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id113350">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="activerecord_id329208">has_one</h3></div></div></div><p id="activerecord_id329213">A <code class="methodname">has_one</code> association declares
+                a one-to-one relationship on a model that does <span class="emphasis"><em>not</em></span> hold the
+                foreign key. If we have a <code class="classname">MailingAddress</code> model, we might say
+                that a <code class="classname">Student</code>
+                <code class="methodname">has_one</code>
+                <code class="classname">MailingAddress</code>:</p><div class="comment_container" name="c_activerecord_id329213" id="c_activerecord_id329213"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id329213">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id340977"><pre class="programlisting" id="activerecord_id340979">class Student &lt; ActiveRecord::Base
+  belongs_to :school
+  has_one    :mailing_address
+end</pre><div class="comment_container" name="c_activerecord_id340979" id="c_activerecord_id340979"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id340979">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id329021">This would require the <span class="database">mailing_addresses</span> table to have a <span class="property">student_id</span>
+                column. In other respects, <code class="methodname">has_one</code> gives the same
+                functionality as <code class="methodname">belongs_to</code>.</p><div class="comment_container" name="c_activerecord_id329021" id="c_activerecord_id329021"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id329021">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="activerecord_id328226">Options</h3></div></div></div><div class="sect3" lang="en" xml:lang="en"><div class="titlepage"><div><div><h4 class="title" id="activerecord_id328232">has_one/has_many/belongs_to</h4></div></div></div><p id="activerecord_id328237">
+                    </p><div class="variablelist"><dl><dt id="activerecord_id96568"><span class="term"><em class="parameter"><code>:autosave</code></em></span></dt><dd><p id="activerecord_id341569">If <em class="parameter"><code>:autosave</code></em>
+                                    is true, two new things will happen when instances of this class
+                                    are saved. First, any objects in the association will also be
+                                    saved. Second, associated objects which have had the <code class="methodname">mark_for_destruction</code> method called on them
+                                    will be destroyed. Defaults to false.</p></dd><div class="comment_container" name="c_activerecord_id96568" id="c_activerecord_id96568"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id96568">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="activerecord_id101089"><span class="term"><em class="parameter"><code>:class_name</code></em></span></dt><dd><p id="activerecord_id338163">This option specifies the class
+                                    name of the associated objects (as a <code class="classname">String</code>), and is only needed if the class name is
+                                    not simply the CamelCase version of the name given to the
+                                    association.</p><div class="informalexample" id="activerecord_id63635"><pre class="programlisting" id="activerecord_id63637">class Student &lt; ActiveRecord::Base
+  belongs_to :school   # don't need to do :class_name =&gt; 'School'
+  has_one    :address, :class_name =&gt; 'MailingAddress'
+end</pre></div></dd><div class="comment_container" name="c_activerecord_id101089" id="c_activerecord_id101089"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id101089">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="activerecord_id103109"><span class="term"><em class="parameter"><code>:conditions</code></em></span></dt><dd><p id="activerecord_id57281">Sets extra conditions required for
+                                    records to be included in the association. Takes a hash, array,
+                                    or string, just like in the various finder methods. If a hash is
+                                    used, the association's <code class="methodname">create</code> and
+                                        <code class="methodname">build</code> methods will automatically
+                                    set the required attributes for new records as they are defined
+                                    in the conditions hash. For example:</p><div class="informalexample" id="activerecord_id324134"><pre class="programlisting" id="activerecord_id324136">class Student &lt; ActiveRecord::Base
+  has_many :canadian_addresses, :class_name =&gt; 'MailingAddress', :conditions =&gt; {:country =&gt; 'CA'}
+end</pre></div><p id="activerecord_id324146">In this case, <code class="code">student.canadian_addresses</code> would only return the
+                                    student's addresses in Canada, and <code class="code">student.canadian_addresses.build</code> would initialize a
+                                        <code class="classname">MailingAddress</code> with <span class="property">country</span> already set to "CA".</p></dd><div class="comment_container" name="c_activerecord_id103109" id="c_activerecord_id103109"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id103109">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="activerecord_id113860"><span class="term"><em class="parameter"><code>:dependent</code></em></span></dt><dd><p id="activerecord_id330957">Determines what to do with
+                                    associated objects when instances of this class are destroyed.</p><div class="itemizedlist" id="activerecord_id330962"><ul><li><p id="activerecord_id330966">The <span class="symbol">:destroy</span> setting calls the <code class="methodname">destroy</code> method on each associated object
+                                            when the parent is destroyed.</p></li><li><p id="activerecord_id330982">When set to <span class="symbol">:delete</span> (for a <code class="methodname">belongs_to</code> or <code class="methodname">has_one</code> association) or <span class="symbol">:delete_all</span> (for <code class="methodname">has_many</code> associations), the associated
+                                            records are deleted from the database without using the
+                                                <code class="methodname">destroy</code> method. This means
+                                            that no callbacks are run before deletion (such as from
+                                            a <em class="parameter"><code>:dependent</code></em> option on another
+                                            association), so this setting should be used with
+                                            caution. On the other hand, considerable processing time
+                                            is saved by not having to first load the associated
+                                            records into memory in order to perform the
+                                        callbacks.</p></li><li><p id="activerecord_id317893">For <code class="methodname">has_one</code> and <code class="methodname">has_many</code> associations, <code class="code">:dependent
+                                                =&gt; :nullify</code> simply sets the relevant
+                                            foreign keys of the associated records to <code class="constant">NULL</code>.</p></li></ul></div><p id="activerecord_id317914">By default, the associated objects
+                                    are left alone.</p></dd><div class="comment_container" name="c_activerecord_id113860" id="c_activerecord_id113860"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id113860">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="activerecord_id102739"><span class="term"><em class="parameter"><code>:foreign_key</code></em></span></dt><dd><p id="activerecord_id317929">Specifies the name of the foreign
+                                    key used for this association. For <code class="methodname">has_one</code> and <code class="methodname">has_many</code>
+                                    associations, this defaults to the singular underscored version
+                                    of the name of the parent class with "_id" appended. For
+                                        <code class="methodname">belongs_to</code> associations, the
+                                    default is the name of the association with "_id" appended. A
+                                    contrived example:</p><div class="informalexample" id="activerecord_id317950"><pre class="programlisting" id="activerecord_id317952">class School &lt; ActiveRecord::Base
+  has_many   :students,
+             :foreign_key =&gt; 'facility_id' # would default to school_id
+end
+
+class Student &lt; ActiveRecord::Base
+  belongs_to :university,
+             :class_name =&gt; 'School',
+             :foreign_key =&gt; 'facility_id' # would default to university_id
+end</pre></div></dd><div class="comment_container" name="c_activerecord_id102739" id="c_activerecord_id102739"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id102739">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="activerecord_id92138"><span class="term"><em class="parameter"><code>:include</code></em></span></dt><dd><p id="activerecord_id317972">Specifies second-order associations
+                                    which are eager-loaded with this association in the same manner
+                                    as ActiveRecord's finder methods.</p></dd><div class="comment_container" name="c_activerecord_id92138" id="c_activerecord_id92138"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id92138">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="activerecord_id100666"><span class="term"><em class="parameter"><code>:readonly</code></em></span></dt><dd><p id="activerecord_id317990">When <em class="parameter"><code>:readonly</code></em> is true, objects loaded through this
+                                    association cannot be saved.</p></dd><div class="comment_container" name="c_activerecord_id100666" id="c_activerecord_id100666"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id100666">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="activerecord_id79279"><span class="term"><em class="parameter"><code>:select</code></em></span></dt><dd><p id="activerecord_id60341">Takes a string of comma-separated
+                                    column names to select when loading the associated objects from
+                                    the database, just as in ActiveRecord's finder methods. The
+                                    default is to select all columns. When using this option, you
+                                    must include the primary key in the string if you want to be
+                                    able to save the associated objects.</p></dd><div class="comment_container" name="c_activerecord_id79279" id="c_activerecord_id79279"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id79279">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="activerecord_id97325"><span class="term"><em class="parameter"><code>:validate</code></em></span></dt><dd><p id="activerecord_id334815">If set to true, the associated
+                                    objects are validated along with the parent object when it is
+                                    saved. </p></dd><div class="comment_container" name="c_activerecord_id97325" id="c_activerecord_id97325"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id97325">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div><p>
+                </p><div class="comment_container" name="c_activerecord_id328237" id="c_activerecord_id328237"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id328237">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activerecord_id336540">Creating new records</h2></div></div></div><p id="activerecord_id336545">You can create an ActiveRecord object the same way you
+            would with most other Ruby objects, by calling the <code class="methodname">new</code> method
+            on the appropriate class:</p><div class="comment_container" name="c_activerecord_id336545" id="c_activerecord_id336545"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id336545">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id336554"><pre class="programlisting" id="activerecord_id336556">cloud = Cloud.new
+# =&gt; #&lt;Cloud id: nil, contributor_id: nil, context_url: nil, image_url: nil, created_at: nil, updated_at: nil&gt;</pre><div class="comment_container" name="c_activerecord_id336556" id="c_activerecord_id336556"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id336556">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id336566">Nothing is saved to the database yet; all we've done is
+            create an instance of <code class="classname">Cloud</code> in memory. Because we didn't specify
+            any of the values for its attributes, the new object is initialized with <code class="constant">nil</code> for each of them. Even the primary key <span class="property">id</span> attribute
+            is blank at this point, since it is determined only when the object is saved to the
+            database as a record. You can also pass a hash of attribute-value pairs to <code class="classname">Cloud</code>'s initializer if you want to start the object off with some novel
+            data. Either way, once the object is created you can access its attributes via accessor
+            methods generated automatically by ActiveRecord:</p><div class="comment_container" name="c_activerecord_id336566" id="c_activerecord_id336566"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id336566">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id336594"><pre class="programlisting" id="activerecord_id336596">cloud = Cloud.new(:url =&gt; 'http://ahplemmons.deviantart.com/art/Elephants-in-my-imagination-38027108')</pre><div class="comment_container" name="c_activerecord_id336596" id="c_activerecord_id336596"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id336596">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id66298">Once the cloud's attributes are how we want them, we can
+            save the cloud to the database:</p><div class="comment_container" name="c_activerecord_id66298" id="c_activerecord_id66298"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id66298">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id66304"><pre class="programlisting" id="activerecord_id66306">cloud.save
+# =&gt; true</pre><div class="comment_container" name="c_activerecord_id66306" id="c_activerecord_id66306"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id66306">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id66310">ActiveRecord's <code class="methodname">save</code> method tries to
+            save the model as a record in the database. If it is saved successfully, it returns
+                <code class="constant">true</code>. If it fails for any reason, it returns <code class="constant">false</code>. The most common way for a save to fail is because the model's
+            validations have not been satisfied correctly. See <a class="xref" href="ch03.html">???</a> for details on how to define validations for
+            your models. There's also a whiny version of the method which will raise an exception if
+            the save encounters any errors:</p><div class="comment_container" name="c_activerecord_id66310" id="c_activerecord_id66310"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id66310">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id66334"><pre class="programlisting" id="activerecord_id327296">cloud.save!
+# =&gt; true</pre><div class="comment_container" name="c_activerecord_id327296" id="c_activerecord_id327296"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id327296">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="activerecord_id327301">Finders (Read)</h2></div></div></div><p id="activerecord_id327307">There are a number of ways available to look up existing
+            database records and generate ActiveRecord objects from them. There is one class method
+            available on each of your models which serves as the primary interface for looking up
+            records. This method is called <code class="methodname">find</code>, and operates in one of a
+            few different modes depending on the first argument passed to it.</p><div class="comment_container" name="c_activerecord_id327307" id="c_activerecord_id327307"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id327307">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id327320">If the first argument is an integer, you will get new
+            ActiveRecord instances corresponding to the record with the given <span class="property">id</span> column value(s):</p><div class="comment_container" name="c_activerecord_id327320" id="c_activerecord_id327320"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id327320">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id333979"><pre class="programlisting" id="activerecord_id333981">Cloud.find(1)
+# =&gt; #&lt;Cloud id: 1, url: "http://ahplemmons.deviantart.com/art/Elephants-in-m...", looks_like: "elephant", created_at: "2009-02-16 22:23:10", updated_at: "2009-02-16 22:23:10"&gt;
+
+Cloud.find(1,2)
+# =&gt; [#&lt;Cloud id: 1, url: "http://ahplemmons.deviantart.com/art/Elephants-in-m...", looks_like: "elephant", created_at: "2009-02-16 22:23:10", updated_at: "2009-02-16 22:23:10"&gt;, #&lt;Cloud id: 2, url: "http://flickr.com/photos/saulgm/2361954240/", looks_like: "heart", created_at: "2009-02-16 22:23:10", updated_at: "2009-02-16 22:33:06"&gt;]</pre><div class="comment_container" name="c_activerecord_id333981" id="c_activerecord_id333981"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id333981">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id333986">If any of the given <span class="property">id</span> values do not
+            correspond to those of existing records in the <span class="database">clouds</span> table, then
+            the find method will raise an <code class="classname">ActiveRecord::RecordNotFound</code> error.
+            If you don't know or don't care what a cloud's <span class="property">id</span> is, you can get
+            the first or last cloud in the database by passing <span class="symbol">:first</span> or <span class="symbol">:last</span> to <code class="methodname">Cloud#find</code>:</p><div class="comment_container" name="c_activerecord_id333986" id="c_activerecord_id333986"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id333986">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id334017"><pre class="programlisting" id="activerecord_id334019">Cloud.find(:first)
+# =&gt; #&lt;Cloud id: 1, url: "http://ahplemmons.deviantart.com/art/Elephants-in-m...", looks_like: "elephant", created_at: "2009-02-16 22:23:10", updated_at: "2009-02-16 22:23:10"&gt;
+
+Cloud.find(:last)
+# =&gt; #&lt;Cloud id: 2, url: "http://flickr.com/photos/saulgm/2361954240/", looks_like: "heart", created_at: "2009-02-16 22:23:10", updated_at: "2009-02-16 22:33:06"&gt;
+</pre><div class="comment_container" name="c_activerecord_id334019" id="c_activerecord_id334019"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id334019">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id334024">These method calls would each return <code class="constant">nil</code> if the <span class="database">clouds</span> table were empty; they won't raise an
+            exception like they would if they were given specific <span class="property">id</span>s. You can
+            get an array of all clouds in the database with <span class="symbol">:all</span>:</p><div class="comment_container" name="c_activerecord_id334024" id="c_activerecord_id334024"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id334024">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id334043"><pre class="programlisting" id="activerecord_id334045">Cloud.find(:all)
+# =&gt; [#&lt;Cloud id: 1, url: "http://ahplemmons.deviantart.com/art/Elephants-in-m...", looks_like: "elephant", created_at: "2009-02-16 22:23:10", updated_at: "2009-02-16 22:23:10"&gt;, #&lt;Cloud id: 2, url: "http://flickr.com/photos/saulgm/2361954240/", looks_like: "heart", created_at: "2009-02-16 22:23:10", updated_at: "2009-02-16 22:33:06"&gt;]</pre><div class="comment_container" name="c_activerecord_id334045" id="c_activerecord_id334045"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id334045">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id334049">If the <span class="database">clouds</span> table were empty, this
+            method call would just return an empty array.</p><div class="comment_container" name="c_activerecord_id334049" id="c_activerecord_id334049"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id334049">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id322297">No matter which mode you are using with <code class="methodname">find</code>, you can alter the way records are retrieved by providing a hash of
+            options as the last argument. Almost all of these options directly correspond with
+            fragments of <acronym class="acronym">SQL</acronym> which are incorporated into the the <span class="command"><strong>SELECT</strong></span> query generated by ActiveRecord.</p><div class="comment_container" name="c_activerecord_id322297" id="c_activerecord_id322297"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id322297">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="note"><h3 class="title">Note</h3><p id="activerecord_id325357">If you want to save yourself some keystrokes, you can
+                use shortcuts for most of <code class="methodname">find</code>'s retrieval
+                    approaches:</p><div class="informalexample" id="activerecord_id325365"><pre class="programlisting" id="activerecord_id325367">Cloud.first(options)
+Cloud.last(options)
+Cloud.all(options)</pre><div class="comment_container" name="c_activerecord_id325367" id="c_activerecord_id325367"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id325367">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_activerecord_id325357" id="c_activerecord_id325357"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id325357">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="activerecord_id325373">Conditions</h3></div></div></div><p id="activerecord_id325378">The <span class="property">:conditions</span> option allows you
+                to place limits on which records are retrieved from the database. You can supply
+                these conditions as a string, an array, or a hash, but in the end it will always end
+                up as a <span class="command"><strong>WHERE</strong></span> clause in the <span class="command"><strong>SELECT</strong></span> query which
+                gets sent to the database. Passing in a hash is arguably the most Ruby-like way to
+                handle conditioned queries, so it shouldn't be surprising that it looks very little
+                like the <acronym class="acronym">SQL</acronym> that it eventually gets translated into:<span id="id4125619"><sup>[<a href="ch03.html#ftn.id4125619" class="footnote">1</a>]</sup></span></p><div class="comment_container" name="c_activerecord_id325378" id="c_activerecord_id325378"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id325378">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id61898"><pre class="programlisting" id="activerecord_id61900">Cloud.all(:conditions =&gt; {:looks_like =&gt; 'elephant'})
+# =&gt; SELECT * FROM "clouds" WHERE ("clouds"."looks_like" = 'elephant')</pre><div class="comment_container" name="c_activerecord_id61900" id="c_activerecord_id61900"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id61900">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id61906"></p><div class="comment_container" name="c_activerecord_id61906" id="c_activerecord_id61906"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id61906">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id61909">As you can see, the keys of the conditions hash are
+                interpreted as column names in the model's table. The associated values can take a
+                few different forms. Most of the time, the supplied object is mapped from its Ruby
+                type to its database equivalent and evaluated for equality with each record's column
+                value. So in the first example above, ActiveRecord would return all clouds which
+                have a <span class="property">looks_like</span> column value equal to the string <code class="constant">"elephant"</code>.</p><div class="comment_container" name="c_activerecord_id61909" id="c_activerecord_id61909"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id61909">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id61926">If an array is provided, then it is interpreted as a
+                list of possible values:</p><div class="comment_container" name="c_activerecord_id61926" id="c_activerecord_id61926"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id61926">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id61930"><pre class="programlisting" id="activerecord_id61933">Cloud.all(:conditions =&gt; {:looks_like =&gt; ['elephant', 'mouse']})
+# =&gt; SELECT * FROM "clouds" WHERE ("clouds"."looks_like" IN ('elephant','mouse'))</pre><div class="comment_container" name="c_activerecord_id61933" id="c_activerecord_id61933"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id61933">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id61940">In this example, the <acronym class="acronym">SQL</acronym>
+                <code class="function">IN</code> function is used by ActiveRecord to return all clouds with
+                    <span class="property">looks_like</span> equal to <span class="emphasis"><em>either</em></span>
+                <code class="constant">"elephant"</code> or <code class="constant">"mouse"</code>. Similarly, if a
+                range object is provided then the <code class="function">BETWEEN</code> function is used to
+                return only records with column values in the specified range:</p><div class="comment_container" name="c_activerecord_id61940" id="c_activerecord_id61940"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id61940">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id342772"><pre class="programlisting" id="activerecord_id342774">Cloud.all(:conditions =&gt; {:id =&gt; 1..20})
+# =&gt; SELECT * FROM "clouds" WHERE ("clouds"."id" BETWEEN 1 AND 20)
+
+Cloud.all(:conditions =&gt; {:created_at =&gt; (Time.now - 2.weeks)..(Time.now)})
+# =&gt; SELECT * FROM "clouds"
+#    WHERE ("clouds"."created_at" BETWEEN '2009-02-07 16:30:35' AND '2009-02-21 16:30:35')</pre><div class="comment_container" name="c_activerecord_id342774" id="c_activerecord_id342774"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id342774">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id342784">It's nice to be able to use pure Ruby in this way to
+                customize your database queries, but this approach has big limitations which prevent
+                it from being used all the time. For example, there is no way of using the hash
+                syntax to specify "greater-than" conditions, or to match strings with the <code class="function">LIKE</code> function, or to use any of the other functions or operators
+                available in <acronym class="acronym">SQL</acronym> besides <code class="function">IN</code>, <code class="function">BETWEEN</code>, and the equality operator. When more flexibility is
+                required, we can use the array syntax:</p><div class="informalexample" id="activerecord_id348378"><pre class="programlisting" id="activerecord_id348380">
+Cloud.all(:conditions =&gt; ["looks_like LIKE ? AND updated_at &gt; ?", "%#{params[:q]}%", 2.weeks.ago])
+# =&gt; SELECT * FROM "clouds" WHERE (looks_like LIKE '%squirrel%' AND updated_at &gt; '2009-03-01 20:26:16') 
+</pre><div class="comment_container" name="c_activerecord_id348380" id="c_activerecord_id348380"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id348380">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="comment_container" name="c_activerecord_id342784" id="c_activerecord_id342784"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id342784">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id348388">This code would live in a controller action, where we
+                would have access to a <code class="varname">params</code> hash of client-supplied parameters
+                . Here we are taking in a query parameter and using it to look up all the clouds
+                updated in the last two weeks that contain the search string in their <span class="property">looks_like</span> column value. The array begins with a fragment of
+                    <acronym class="acronym">SQL</acronym> that will form the basis of the conditions. Each question
+                mark in that first string is replaced with the next remaining value in the array, in
+                    sequence.</p><div class="comment_container" name="c_activerecord_id348388" id="c_activerecord_id348388"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id348388">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id59581">So why don't we just construct the conditions string
+                ourselves instead of using this odd syntax? The reason is that the array syntax
+                gives ActiveRecord a chance to convert and quote values before they are interpolated
+                into the <acronym class="acronym">SQL</acronym>. In the above example, the Ruby <code class="classname">Time</code> object constructed by the <code class="code">2.weeks.ago</code> expression is
+                converted to an appropriate format and the query parameter is wrapped in single
+                quotes as required by the database. This is obviously desirable for the sake of
+                convenience, but it also has a crucial role to play in the security of your
+                application: unless user-supplied values are properly quoted before being sent to
+                the database, your application is left vulnerable to <acronym class="acronym">SQL</acronym>
+                injection attacks.</p><div class="comment_container" name="c_activerecord_id59581" id="c_activerecord_id59581"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id59581">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="activerecord_id333583">If you have a lot of conditions to deal with, it can be
+                hard to keep track of which question mark represents which value. In cases like
+                that, it can be easier to use named placeholders instead of question marks. Then you
+                just need to put the values in a hash keyed with those placeholders:</p><div class="comment_container" name="c_activerecord_id333583" id="c_activerecord_id333583"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id333583">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id333592"><pre class="programlisting" id="activerecord_id333594">Cloud.all(:conditions =&gt; ["looks_like LIKE :query AND
+                           updated_at &gt; :updated_since AND
+                           created_at &lt; :created_until",
+                          { :query =&gt; "%#{params[:q]}%",
+                            :updated_since =&gt; 2.weeks.ago,
+                            :created_until =&gt; 3.hours.ago }]
+# =&gt; SELECT * FROM "clouds" WHERE (looks_like LIKE '%squirrel%' AND
+#     updated_at &gt; '2009-03-01 21:40:47' AND
+#     created_at &lt; '2009-03-15 18:40:47')</pre><div class="comment_container" name="c_activerecord_id333594" id="c_activerecord_id333594"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id333594">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="activerecord_id333601">When your query doesn't need any values to be converted
+                or sanitized, you don't need to use an array; you can just provide the WHERE clause
+                of the query as-is:</p><div class="comment_container" name="c_activerecord_id333601" id="c_activerecord_id333601"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id333601">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="activerecord_id333604"><pre class="programlisting" id="activerecord_id63896">Cloud.all(:conditions =&gt; 'updated_at &gt; "2008"')
+# =&gt; SELECT * FROM "clouds" WHERE (updated_at &gt; "2008")</pre><div class="comment_container" name="c_activerecord_id63896" id="c_activerecord_id63896"><p class="comment_count">
+          <a class="comment_count" href="ch03.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_activerecord_id63896">
+
+
+        <h4><a href="ch03.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div></div><div class="footnotes"><br /><hr width="100" align="left" /><div class="footnote"><p><sup>[<a id="ftn.id4125619" href="ch03.html#id4125619" class="para">1</a>] </sup>The SQL shown here was generated by the SQLite3 database adapter.
+                        Different adapters necessarily produce slightly different forms of SQL, so a
+                        Rails application using another database such as MySQL will show some minor
+                        variation which is apparent in the application's logfiles.</p></div></div></div><!-- Comment form -->
+
+   <div id="comment_form_main" class="comment_form">
+
+
+<h5>You must sign in or <a href="register.html">register</a> before commenting</h5>
+
+  <form action="signin.html" method="post"><table>
+     <tr class="field">
+<td class="label" valign="top"><label>Username:</label></td>
+<td class="field" colspan="2" valign="top"><input id="username" name="username" type="text" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input name="redirect_to" type="hidden" value="http://rails-nutshell.labs.oreilly.com/ch03.html" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input name="xml_id" type="hidden" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label>Password:</label></td>
+<td class="field" colspan="2" valign="top"><input id="password" name="password" type="password" /></td>
+</tr>
+  <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input id="submit" name="submit" type="submit" value="Sign in" /></td>
+</tr>
+  </table></form>
+
+
+
+</div>
+
+
+<div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ch04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 2. Action Controller </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> Chapter 4. Active Resource</td></tr></table></div><div class="footer-copyright"></div></body></html>

@@ -1,0 +1,218 @@
+/* Color Scheme:
+   Tetrad around oreilly.com red #990000
+
+Primary Color (red):
+  990000    731D1D    630000    CC3333    CC5C5C
+Secondary Color A (orange):
+  994500    73441D    632D00    CC7833    CC8F5C  F3E3D6
+Secondary Color B (blue):
+  005C5C    114545    003C3C    2BADAD    4EADAD    95D7D6 D6F3F2
+Complementary Color (green):
+  007A00    175C17    005000    2FBD2F    55BD55   D6F3D6
+
+via http://colorschemedesigner.com/
+*/
+
+html {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Font Selection & Headings */
+body {
+  font-family: sans-serif;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body > div {
+  margin-top: 0;
+  max-width: 60em;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.navheader, .navfooter {
+  /*
+  margin: 0;
+  */
+}
+.navheader {
+  margin-top: 1em;
+}
+
+h1, h2, h3, h4, h5 {
+  color: #990000;
+  font-family:serif;
+  font-weight: bold; 
+}
+
+h1 {
+  font-size: 1.5em; /* 16x1.5=24px */
+  line-height: 1.636em;/* 16x1.636=36px */
+  margin: 0;
+}
+
+h2 {
+  font-size: 1.25em; /* 16x1.25=20px */
+  margin:1em 0; /* 18x1=18px */
+}
+
+h3 {
+  font-size: 1.125em; /* 16x1.125=18px */
+  margin:1em 0; /* 18x1=18px */
+}
+
+h4 {
+  font-size: 1.0625em; /* 16x1.0625=17px */
+  margin:1em 0; /* 18x1=18px */
+}
+
+/* Basic fonts and margins for paragraphs and code */
+p {
+  font-size: 1em; /* 16x1=16px */
+  line-height: 1.2em;
+  margin: 1em 0; /* 14x1=14px */
+}
+
+/* No <tt>s are produced by the XHTML DocBook-XSL output, but we'll be safe... */
+pre, code, tt { 
+  font-family:'andale mono','lucida console',monaco,monospace;
+  font-size: 0.875em; /* 16x0.875=14px */
+}
+pre {
+  background: #F2F2F2;
+  padding: 0.5em;
+  margin: 1em; /* 14x1=14px */
+}
+
+/* Links */
+a, a:visited {
+  text-decoration: none;
+}
+
+a {
+  color: #00f;
+}
+
+a:visited {
+  color: #551A8B;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* DocBook Inlines */
+.term {
+  font-weight:bold;
+}
+
+/* Tables */
+.table-contents > table {
+  border: thin solid black;
+  width: auto;
+}
+
+.table-contents th, .table-contents td  {
+  padding: 0.5em;
+  margin: 0;
+  border-spacing: 0;
+}
+
+.table-contents p {
+  margin: 0;
+  padding: 0;
+}
+
+.table-contents pre {
+  background: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* DocBook Blocks */
+.sidebar {
+  background-color: #D6F3F2;
+  border: thin solid black;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.5em 1em 0.5em 1em;
+}
+
+.sidebar > p.title {
+  text-align: center;
+}  
+
+.note, .tip {
+  background-color: #D6F3D6;
+}
+
+.warning {
+  background-color: #F3E3D6;
+}
+
+.note > .title, .tip > .title, .warning > .title {
+  margin-left: 2em;
+  color: black;
+}
+
+.note, .tip, .warning {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0.5em 1em 0.5em 1em;
+}
+
+/* DocBook Figures */
+.figure {
+  padding: 1em;
+  margin-left: 3em;
+}
+.mediaobject {
+  padding: 0.6em;
+}
+
+.figure > p {
+  padding: 0;
+}
+
+/* Misc */
+.footer-copyright {
+  text-align: center;
+}  
+
+
+.oreilly-header { 
+  height: 32px;
+  background-image: url(/oreilly-header.jpg);
+  background-repeat: repeat-x;
+  margin:0;  
+  padding:0 0 0 52px;
+}
+
+.oreilly-header p { 
+  text-transform:uppercase;
+  font-size: 11px;
+  color: rgb(169,169,169);
+  margin:0;  
+  padding:0;
+  line-height: normal:
+}
+
+.oreilly-header a { 
+  color: rgb(214,214,214) !important;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+}
+
+.oreilly-header img { 
+  border: 0; 
+  margin: 0; 
+  padding: 0;
+  display: block; 
+  float: left;
+  padding-right: 30px;
+
+}

@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="js/jquery-1.3.2.min.js" type="text/javascript"></script>
+    
+    <script src="js/openfeedback.js" type="text/javascript"></script>
+        
+
+    <link rel="alternate" type="application/atom+xml" title="Comments on this page" href="comments/feed/ch05.html" />
+    <link rel="alternate" type="application/atom+xml" title="All comments on Rails in a Nutshell" href="comments/feed%3Fid=book" />
+
+        <title>Chapter 5. Action Mailer</title><link rel="stylesheet" href="css/ofps_main.css" type="text/css" /><link rel="stylesheet" href="css/ofps_ui.css" type="text/css" /><meta name="generator" content="DocBook XSL Stylesheets V1.74.3" /><link rel="home" href="index.html" title="Rails in a Nutshell" /><link rel="up" href="index.html" title="Rails in a Nutshell" /><link rel="prev" href="ch04.html" title="Chapter 4. Active Resource" /><link rel="next" href="re01.html" title="assert_emails" /></head><body><div class="oreilly-header"><ul><li><p><a href="http://oreilly.com/"><img alt="O'Reilly Logo" src="oreilly-logo.jpg" /></a></p></li><li><p id="oreilly-breadcrumbs"><a href="http://labs.oreilly.com/">Labs</a> &gt; <a href="http://labs.oreilly.com/ofps.html">OFPS</a> &gt; <a href="index.html">Rails in a Nutshell</a></p></li><li><p class="login">
+
+          <a href="signin.html">Sign-in</a> or 
+          <a href="register.html">Register</a>
+
+            </p></li><li><p class="ofps-show-hide-all-comments"><a href="ch05.html#" class="ofps-show-hide-all-comments-toggle">Show all comments</a></p></li><li><p><a href="http://labs.oreilly.com/ofps.html">Help</a></p></li></ul></div><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Chapter 5. Action Mailer</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ch04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="re01.html">Next</a></td></tr></table><hr /></div><div class="chapter" lang="en" id="actionmailer_id326030" xml:lang="en"><div class="titlepage"><div><div><h2 class="title">Chapter 5. Action Mailer</h2></div></div></div><p id="actionmailer_id60556">Action Mailer is a framework for sending and receiving email. It makes sending templated
+    email, gracefully degrading HTML email, email with attachments, and receiving email simple,
+    while abstracting away complex issues like <acronym class="acronym">MIME</acronym> encoding and quoting. This
+    chapter will cover all the most important aspects of Action Mailer including the generation of
+    mailers, sending email, and the configuration and testing of mailers.</p><div class="comment_container" name="c_actionmailer_id60556" id="c_actionmailer_id60556"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id60556">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="actionmailer_id337052">Generating Mailers</h2></div></div></div><p id="actionmailer_id337075">Rails provides a generator for creating new mailer models. The generator is passed the
+      mailer name in underscored or camel case format followed by zero or more actions:</p><div class="comment_container" name="c_actionmailer_id337075" id="c_actionmailer_id337075"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id337075">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="cmdsynopsis" id="actionmailer_id337081"><p><code class="command">script/generate mailer</code>   <em class="replaceable"><code>mailer_name</code></em>  [<em class="replaceable"><code>action</code></em>...]</p></div><div class="comment_container" name="c_actionmailer_id337081" id="c_actionmailer_id337081"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id337081">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="actionmailer_id327709"> The generator creates the following files:</p><div class="comment_container" name="c_actionmailer_id327709" id="c_actionmailer_id327709"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id327709">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="itemizedlist" id="actionmailer_id327712"><ul><li><p id="actionmailer_id324543">mailer class in <code class="filename">app/models</code>.</p><div class="comment_container" name="c_actionmailer_id324543" id="c_actionmailer_id324543"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id324543">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="actionmailer_id69537">view templates for each <em class="replaceable"><code>action</code></em> in <code class="filename">app/views/<em class="replaceable"><code>mailer_name</code></em></code>.</p><div class="comment_container" name="c_actionmailer_id69537" id="c_actionmailer_id69537"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id69537">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="actionmailer_id69552">unit test stub in <code class="filename">test/unit</code>.</p><div class="comment_container" name="c_actionmailer_id69552" id="c_actionmailer_id69552"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id69552">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="actionmailer_id69562">test fixtures for each <em class="replaceable"><code>action</code></em> in <code class="filename">test/fixtures/<em class="replaceable"><code>mailer_name</code></em></code>.</p><div class="comment_container" name="c_actionmailer_id69562" id="c_actionmailer_id69562"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id69562">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li></ul></div><p id="actionmailer_id69576">The following command generates a new mailer model class named <code class="classname">OrderMailer</code> with a single action <code class="methodname">confirmation</code>:</p><div class="comment_container" name="c_actionmailer_id69576" id="c_actionmailer_id69576"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id69576">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><pre class="screen" id="actionmailer_id69586">$ script/generate mailer OrderMailer confirmation
+      create  app/models/
+      create  app/views/order_mailer
+      create  test/unit/
+      create  test/fixtures/order_mailer
+      create  app/models/order_mailer.rb
+      create  test/unit/order_mailer_test.rb
+      create  app/views/order_mailer/confirmation.erb
+      create  test/fixtures/order_mailer/confirmation</pre><div class="comment_container" name="c_actionmailer_id69586" id="c_actionmailer_id69586"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id69586">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="actionmailer_id69594">Sending Email</h2></div></div></div><p id="actionmailer_id69599">A mailer model's job is to encapsulate the creation and delivery of the different email
+      messages that you need for a particular component of your application. For example, an
+        <code class="classname">OrderMailer</code> would define all of the email messages for communicating
+      with a customer regarding an order they've placed at your online store. </p><div class="comment_container" name="c_actionmailer_id69599" id="c_actionmailer_id69599"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id69599">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="actionmailer_id69611">There are two parts to a mailer: the model and the view. The model portion is stored along
+      with the rest of your models in <code class="filename">app/models</code>. The mailer's views are stored
+      in a subdirectory, named after the mailer model, underneath <code class="filename">app/views</code>
+      with the rest of your application's views. Therefore an <code class="classname">OrderMailer</code>
+      model would itself be stored as <code class="filename">app/models/order_mailer.rb</code> and would look
+      for its view templates under the directory <code class="filename">app/views/order_mailer</code>. </p><div class="comment_container" name="c_actionmailer_id69611" id="c_actionmailer_id69611"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id69611">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="actionmailer_id342403">Mailer Models</h3></div></div></div><p id="actionmailer_id342408">Mailer models define any number of different email messages through what are called
+          <span class="emphasis"><em>mailer actions</em></span>. Each mailer action is simply an instance method
+        defined in the mailer class. The method body of the action is where you configure the
+        properties and options for the email and prepare the variables that will be passed to the
+        view template for rendering. Following is the definition of an order confirmation email:</p><div class="comment_container" name="c_actionmailer_id342408" id="c_actionmailer_id342408"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id342408">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="example" id="actionmailer-order-confirmation"><p class="title"><b>Example 5.1. A basic mailer model</b></p><div class="example-contents"><pre class="programlisting" id="actionmailer_id342429">class OrderMailer &lt; ActionMailer::Base
+  def confirmation(order)
+    recipients order.email
+    from       "order-confirm@snowdevil.ca"
+    subject    "Your order with Snowdevil"
+    body       :order =&gt; order
+  end
+end</pre><div class="comment_container" name="c_actionmailer_id342429" id="c_actionmailer_id342429"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id342429">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><br class="example-break" /><p id="actionmailer_id342438">This mailer has a single action <code class="methodname">confirmation</code> that has a single
+        parameter <code class="varname">order</code>. The <code class="varname">order</code> is an instance of the
+        customer's order. The action sets the attributes that control the content of the created
+        email message, who the message will appear to be from, and who will receive the message.</p><div class="comment_container" name="c_actionmailer_id342438" id="c_actionmailer_id342438"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id342438">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="note"><h3 class="title">Note</h3><p id="actionmailer_id342458">Action Mailer model attributes are defined with a macro that is similar to Ruby's
+            <code class="methodname">attr_accessor</code> called <code class="methodname">adv_attr_accessor</code>. <code class="literal">adv_attr_accessor</code> works the same way
+          as <code class="methodname">attr_accessor</code>, but an additional setter method is created that
+          allows you to set an instance variable by calling the defined method name with an
+          argument. Both of the following lines of code set the <code class="varname">@from</code> instance
+          variable:</p><div class="comment_container" name="c_actionmailer_id342458" id="c_actionmailer_id342458"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id342458">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id342483"><pre class="programlisting" id="actionmailer_id68653">@from = "nutshell@example.com"
+from "nutshell@example.com"</pre><div class="comment_container" name="c_actionmailer_id68653" id="c_actionmailer_id68653"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68653">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id68661">Setting the attribute through the method call, as shown in the second line above, is
+          the preferred way of setting mailer attributes. This style tends to produce more natural,
+          aesthetically pleasing mailers and is therefore the style used throughout this chapter,
+          the Rails documentation, and mailer generators.</p><div class="comment_container" name="c_actionmailer_id68661" id="c_actionmailer_id68661"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68661">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id68671">Let's take a closer look at the most important and commonly used mailer attributes. The
+        following attributes control the content of the email message:</p><div class="comment_container" name="c_actionmailer_id68671" id="c_actionmailer_id68671"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68671">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="variablelist"><dl><dt id="actionmailer_id92349"><span class="term"><code class="methodname">subject</code></span></dt><dd><p id="actionmailer_id68687">The subject of the email. Sets the <code class="literal">Subject</code> email header.</p></dd><div class="comment_container" name="c_actionmailer_id92349" id="c_actionmailer_id92349"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id92349">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="actionmailer_id101706"><span class="term"><code class="methodname">body</code></span></dt><dd><p id="actionmailer_id68705">The email body. Can be set to either a string or a hash. If the body is set to a
+              string then the string will be used as the email body. If the body is set to a hash
+              then the action's view template will have instance variables set for each key-value
+              pair in the hash. This will be covered in more detail in <a class="xref" href="ch05.html#actionmailer-mailer-views">the section called “Mailer Views”</a>.</p></dd><div class="comment_container" name="c_actionmailer_id101706" id="c_actionmailer_id101706"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id101706">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div><p id="actionmailer_id343191">These attributes control who will receive the email and who the email will be sent from:</p><div class="comment_container" name="c_actionmailer_id343191" id="c_actionmailer_id343191"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id343191">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="variablelist"><dl><dt id="actionmailer_id116262"><span class="term"><code class="methodname">recipients</code></span></dt><dd><p id="actionmailer_id343206">The addresses the email will be delivered to. Can be a single email address or an
+              array of email addresses. Sets the <code class="literal">To</code> email header.</p></dd><div class="comment_container" name="c_actionmailer_id116262" id="c_actionmailer_id116262"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id116262">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="actionmailer_id92787"><span class="term"><code class="methodname">cc</code></span></dt><dd><p id="actionmailer_id343226">The carbon copy recipients of the email. Can be a single email address or an array
+              of email addresses. Sets the <code class="literal">Cc</code> email header.</p></dd><div class="comment_container" name="c_actionmailer_id92787" id="c_actionmailer_id92787"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id92787">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="actionmailer_id112811"><span class="term"><code class="methodname">bcc</code></span></dt><dd><p id="actionmailer_id343245">The blind carbon copy recipients of the email. Can be a single email address or an
+              array of email addresses. Sets the <code class="literal">Bcc</code> email header.</p></dd><div class="comment_container" name="c_actionmailer_id112811" id="c_actionmailer_id112811"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id112811">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><dt id="actionmailer_id97690"><span class="term"><code class="methodname">from</code></span></dt><dd><p id="actionmailer_id343828">The email address the email will be sent from. Sets the <code class="literal">From</code>
+              email header.</p></dd><div class="comment_container" name="c_actionmailer_id97690" id="c_actionmailer_id97690"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id97690">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></dl></div><p id="actionmailer_id343838">
+        </p><div class="note"><h3 class="title">Note</h3><p id="actionmailer_id343843">Email addresses can be provided in any format that is compliant with the <a class="ulink" href="http://www.ietf.org/rfc/rfc2822.txt" target="_top"><em class="citetitle">RFC 2822 Address
+              Specification</em></a>. RFC 2822 addresses take the general form:</p><div class="comment_container" name="c_actionmailer_id343843" id="c_actionmailer_id343843"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id343843">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id343856"><p id="actionmailer_id343858"><code class="literal">"Full Name or Phrase" &lt;username@host&gt; (Comment
+            Area)</code></p><div class="comment_container" name="c_actionmailer_id343858" id="c_actionmailer_id343858"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id343858">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id343867">Some valid RFC 2822 email addresses:</p><table class="simplelist" border="0" summary="Simple list" id="actionmailer_id343869"><tr><td id="actionmailer_id343871"><code class="literal">david@host.example.com</code><div class="comment_container" name="c_actionmailer_id343871" id="c_actionmailer_id343871"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id343871">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></td></tr><tr><td id="actionmailer_id343875"><code class="literal">David Hansson &lt;david@host.example.com&gt;</code><div class="comment_container" name="c_actionmailer_id343875" id="c_actionmailer_id343875"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id343875">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></td></tr><tr><td id="actionmailer_id343881"><code class="literal">David Hansson &lt;david@host.example.com&gt; (Creator of
+                Rails)</code><div class="comment_container" name="c_actionmailer_id343881" id="c_actionmailer_id343881"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id343881">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></td></tr></table><div class="comment_container" name="c_actionmailer_id343867" id="c_actionmailer_id343867"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id343867">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p>
+      </p><div class="comment_container" name="c_actionmailer_id343838" id="c_actionmailer_id343838"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id343838">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="actionmailer_id343892">Mailer Views</h3></div></div></div><p id="actionmailer_id349154">View templates can be rendered using any template handler registered with Rails such as
+          <acronym class="acronym">ERb</acronym>, Builder, or even a custom handler such as Haml. For more
+        information on template handlers see <a class="xref" href="ch05.html">???</a>.</p><div class="comment_container" name="c_actionmailer_id349154" id="c_actionmailer_id349154"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id349154">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="actionmailer_id349169">To automatically render the email body from a view template you need to:</p><div class="comment_container" name="c_actionmailer_id349169" id="c_actionmailer_id349169"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id349169">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="actionmailer_id349173">
+        </p><div class="itemizedlist" id="actionmailer_id349175"><ul><li><p id="actionmailer_id349180">Create a view template in the mailer's views directory with the same name as the
+              mailer action.</p><div class="comment_container" name="c_actionmailer_id349180" id="c_actionmailer_id349180"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id349180">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="actionmailer_id349188">Give the template the file extension of the template handler you want to use to
+              render the view with such as <code class="literal">.erb</code> or <code class="literal">.builder</code>.</p><div class="comment_container" name="c_actionmailer_id349188" id="c_actionmailer_id349188"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id349188">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="actionmailer_id349203">Set the <code class="methodname">content_type</code> attribute in the mailer action
+              unless you're sending plain text. The content-type defaults to <code class="literal">text/plain</code>.</p><div class="comment_container" name="c_actionmailer_id349203" id="c_actionmailer_id349203"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id349203">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li></ul></div><p>
+      </p><div class="comment_container" name="c_actionmailer_id349173" id="c_actionmailer_id349173"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id349173">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="note"><h3 class="title">Note</h3><p id="actionmailer_id349220">It is possible to manually render the email body using the private mailer method
+            <code class="literal">render_message</code>:</p><div class="comment_container" name="c_actionmailer_id349220" id="c_actionmailer_id349220"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id349220">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id349228"><pre class="programlisting" id="actionmailer_id317509">body render_message("confirmation")</pre><div class="comment_container" name="c_actionmailer_id317509" id="c_actionmailer_id317509"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id317509">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id317516">Manually rendering the template is only necessary if you need to render a template
+          with a name that doesn't match the mailer action.</p><div class="comment_container" name="c_actionmailer_id317516" id="c_actionmailer_id317516"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id317516">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id317523">Then you assign the <code class="methodname">body</code> attribute to a hash containing any
+        variables you want assigned as instance variables in the view. An instance variable is
+        created in the view for each key in the hash with the name of the key and the value of the
+        key's corresponding value.</p><div class="comment_container" name="c_actionmailer_id317523" id="c_actionmailer_id317523"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id317523">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="note"><h3 class="title">Note</h3><p id="actionmailer_id317536">Strings or symbols are interchangeable as keys in hash passed to the view. For
+          example, the keys <code class="literal">:title</code> and <code class="literal">"title"</code> will both
+          result in the assignment of an instance variable <code class="literal">@title</code> in the view.
+        </p><div class="comment_container" name="c_actionmailer_id317536" id="c_actionmailer_id317536"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id317536">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id317553">The mailer renders a simple <acronym class="acronym">ERb</acronym> view template. For more information
+        about rendering <acronym class="acronym">ERb</acronym> templates see <a class="xref" href="ch05.html">???</a>. Let's take a look a the template for the order confirmation email: <code class="filename">app/views/order_mailer/notification.erb</code>:</p><div class="comment_container" name="c_actionmailer_id317553" id="c_actionmailer_id317553"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id317553">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id327788"><pre class="programlisting" id="actionmailer_id327790">Thank you for your purchase. You ordered the following items:
+
+&lt;% @order.line_items.each do |item| -%&gt;
+&lt;%= item.description %&gt; - &lt;%= number_to_currency(item.price) %&gt;
+&lt;% end -%&gt;
+
+Your order total is &lt;%= number_to_currency(@order.total) %&gt;</pre><div class="comment_container" name="c_actionmailer_id327790" id="c_actionmailer_id327790"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id327790">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id66741">The view gives the customer an overview of what they bought. We have access to the
+          <code class="varname">@order</code> instance variable in the view template because the mailer action
+        set the <code class="varname">body</code> attribute to a hash containing an <code class="literal">:order</code>
+        key with the instance of an <code class="classname">Order</code> as its value.</p><div class="comment_container" name="c_actionmailer_id66741" id="c_actionmailer_id66741"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id66741">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="actionmailer_id68096">You can also render partial templates in mailer views, just like in your normal Action
+        View templates. For example, we could have used a partial template to render the list of the
+        order's line items.</p><div class="comment_container" name="c_actionmailer_id68096" id="c_actionmailer_id68096"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68096">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="actionmailer_id68104">Delivering Email</h3></div></div></div><p id="actionmailer_id68109">Email is sent using class methods on the mailer model class with the pattern <code class="methodname">deliver_action_name</code> where <code class="literal">action_name</code> is the action name
+        for the email you want delivered. Mailer models are not instantiated directly because Action
+        Mailer prepares and delivers a Ruby <code class="classname">TMail::Mail</code> object behind the
+        scenes, so there is no reason to have an instance of a mailer model.</p><div class="comment_container" name="c_actionmailer_id68109" id="c_actionmailer_id68109"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68109">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="actionmailer_id68128">Let's create some simple plain old Ruby classes for the <code class="classname">Order</code> and
+          <code class="classname">LineItem</code> so that we can send an email using the <code class="methodname">confirmation</code> action and view template we defined previously:</p><div class="comment_container" name="c_actionmailer_id68128" id="c_actionmailer_id68128"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68128">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id68143"><pre class="programlisting" id="actionmailer_id68145">LineItem = Struct.new(:description, :price)
+
+class Order
+  attr_accessor :email, :line_items
+
+  def initialize(email)
+    @email = email
+    @line_items = []
+  end
+
+  def total
+    line_items.sum(&amp;:price)
+  end
+end</pre><div class="comment_container" name="c_actionmailer_id68145" id="c_actionmailer_id68145"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68145">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id68028">Finally, we build a sample order and send the confirmation email as follows:</p><div class="comment_container" name="c_actionmailer_id68028" id="c_actionmailer_id68028"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68028">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id68032"><pre class="programlisting" id="actionmailer_id68034">order = Order.new("cody@example.com")
+order.line_items &lt;&lt; LineItem.new("Freestyle Snowboard", 599.00)
+order.line_items &lt;&lt; LineItem.new("Freestyle bindings", 119.00)
+OrderMailer.deliver_confirmation(order)</pre><div class="comment_container" name="c_actionmailer_id68034" id="c_actionmailer_id68034"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68034">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id68045">The encoded email delivered to the customer:</p><div class="comment_container" name="c_actionmailer_id68045" id="c_actionmailer_id68045"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68045">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id68049"><pre class="programlisting" id="actionmailer_id68051">From: order-confirm@snowdevil.ca&#13;
+To: cody@example.com&#13;
+Subject: Your order with Snowdevil&#13;
+Mime-Version: 1.0&#13;
+Content-Type: text/plain; charset=utf-8&#13;
+&#13;
+Thank you for your purchase. You ordered the following items:
+
+Freestyle Snowboard - $599.00
+Freestyle bindings - $119.00
+
+Your order total is $718.00</pre><div class="comment_container" name="c_actionmailer_id68051" id="c_actionmailer_id68051"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68051">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id68060">There is also another class method for each action with the pattern <code class="methodname">create_action_name</code> that creates the <code class="classname">TMail::Mail</code>
+        object, but doesn't deliver it. </p><div class="comment_container" name="c_actionmailer_id68060" id="c_actionmailer_id68060"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68060">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="actionmailer_id68073">Generating <acronym class="acronym">URL</acronym>s</h3></div></div></div><p id="actionmailer_id68081">Action Mailer also includes support for generating <acronym class="acronym">URL</acronym>s using
+          <code class="methodname">url_for</code> and <a class="xref" href="ch05.html">???</a> in
+        mailer models and views. There is one minor issue when using <code class="methodname">url_for</code> or named routes in mailers: you must provide complete information for
+        the <acronym class="acronym">URL</acronym> to be generated. This includes the host portion of the <acronym class="acronym">URL</acronym>. When generating <acronym class="acronym">URL</acronym>s within Action Pack, most of the
+        information necessary for generating a <acronym class="acronym">URL</acronym> is available by looking at the
+        context of the current request. However, mailer models are not part of the Rails
+        request/response cycle, and therefore don't have access to the request.</p><div class="comment_container" name="c_actionmailer_id68081" id="c_actionmailer_id68081"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id68081">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="actionmailer_id346847">When passing a hash of options to <code class="methodname">url_for</code> you need to provide
+        all of the route components for the <acronym class="acronym">URL</acronym> to be generated, including the
+        host:</p><div class="comment_container" name="c_actionmailer_id346847" id="c_actionmailer_id346847"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id346847">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id346860"><pre class="programlisting" id="actionmailer_id346862">url_for(:host =&gt; "example.com", :controller =&gt; "orders")
+# =&gt; "http://example.com/orders"</pre><div class="comment_container" name="c_actionmailer_id346862" id="c_actionmailer_id346862"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id346862">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id341957">Named routes only need to be supplied with the host:</p><div class="comment_container" name="c_actionmailer_id341957" id="c_actionmailer_id341957"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id341957">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id341961"><pre class="programlisting" id="actionmailer_id341964">closed_orders_url(:host =&gt; "example.com")
+# =&gt; "http://example.com/orders/closed</pre><div class="comment_container" name="c_actionmailer_id341964" id="c_actionmailer_id341964"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id341964">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="tip"><h3 class="title">Tip</h3><p id="actionmailer_id341973">Make sure you always generate absolute <acronym class="acronym">URL</acronym>s in your email messages.
+          Relative <acronym class="acronym">URL</acronym>s don't work in email because there is no current resource
+          for the <acronym class="acronym">URL</acronym> to be relative to. This means that you'll always want to
+          use the <code class="literal">name_of_route_url</code> form of named routes, which generates an
+          absolute <acronym class="acronym">URL</acronym>, and not the <code class="literal">name_of_route_path</code> form,
+          which generates a relative <acronym class="acronym">URL</acronym>.</p><div class="comment_container" name="c_actionmailer_id341973" id="c_actionmailer_id341973"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id341973">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id342005">Instead of passing in the <code class="literal">:host</code> option to every <code class="methodname">url_for</code> or named route call you can set a default <code class="literal">:host</code> for
+        all of your mailer models. An accessor named <code class="methodname">ActionMailer::Base.default_url_options</code> allows the setting of a hash of
+        default <acronym class="acronym">URL</acronym> options that will be used for all <acronym class="acronym">URL</acronym>
+        generation in your mailers. You can set the class accessor directly, but you'll most likely
+        set the options as part of your application's configuration:</p><div class="comment_container" name="c_actionmailer_id342005" id="c_actionmailer_id342005"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id342005">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id342035"><pre class="programlisting" id="actionmailer_id342037">config.action_mailer.default_url_options = { :host =&gt; 'example.com' }</pre><div class="comment_container" name="c_actionmailer_id342037" id="c_actionmailer_id342037"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id342037">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id335494">See <a class="xref" href="ch05.html">???</a> for more about configuring Action
+        Mailer in your Rails application.</p><div class="comment_container" name="c_actionmailer_id335494" id="c_actionmailer_id335494"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id335494">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="note"><h3 class="title">Note</h3><p id="actionmailer_id335507">If you set a default <code class="literal">:host</code> for your mailers then you will want to
+          use the <code class="literal">:only_path =&gt; false</code> option when using <code class="methodname">url_for</code>. This will ensure the generation of absolute <acronym class="acronym">URL</acronym>s. By default, the <code class="methodname">url_for</code> view helper will
+          generate a relative <acronym class="acronym">URL</acronym> when it is not explicitly passed the <code class="literal">:host</code> option. Unfortunately, setting <code class="literal">:only_path =&gt; false</code>
+          in the <code class="literal">default_url_options</code> does not work because the <code class="methodname">url_for</code> view helper will always override the default value.</p><div class="comment_container" name="c_actionmailer_id335507" id="c_actionmailer_id335507"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id335507">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="actionmailer_id335549"><abbr class="abbrev">HTML</abbr> Email</h3></div></div></div><p id="actionmailer_id335556">Most email clients today support rendering <abbr class="abbrev">HTML</abbr> in email messages. To
+        send <abbr class="abbrev">HTML</abbr> email with Action Mailer you only need to set the content type of
+        the email to <code class="literal">text/html</code> in the mailer action and place <abbr class="abbrev">HTML</abbr> markup in the view template. Here is the <code class="methodname">confirmation</code> action from <a class="xref" href="ch05.html#actionmailer-order-confirmation" title="Example 5.1. A basic mailer model">Example 5.1, “A basic mailer model”</a>
+        updated to set the <code class="methodname">content_type</code> attribute to <code class="literal">text/html</code>:</p><div class="comment_container" name="c_actionmailer_id335556" id="c_actionmailer_id335556"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id335556">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id67824"><pre class="programlisting" id="actionmailer_id67826">class OrderMailer &lt; ActionMailer::Base
+  def confirmation(order)
+    recipients   order.email
+    from         "order-confirm@snowdevil.ca"
+    subject      "Your order with Snowdevil"
+    content_type "text/html" 
+    body         :order =&gt; order
+  end
+end</pre><div class="comment_container" name="c_actionmailer_id67826" id="c_actionmailer_id67826"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id67826">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id316170">Sending only <abbr class="abbrev">HTML</abbr> content in an email can be problematic when the
+        recipient, such as a cellphone, can't render it. It is also impossible to know what type of
+        device will be receiving the email you send. The solution to this problem is the <code class="literal">multipart/alternative</code>
+        <abbr class="abbrev">MIME</abbr> type. Setting the content type of an email to <code class="literal">multipart/alternative</code> indicates that the body of the email contains the message
+        in multiple alternative formats. This allows you to send a single email with the body in
+        both plain-text and <abbr class="abbrev">HTML</abbr>, and instructs the recipient device to display the
+        message in the format that it supports the best.</p><div class="comment_container" name="c_actionmailer_id316170" id="c_actionmailer_id316170"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id316170">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="actionmailer_id316199">With Action Mailer all you have to do to take advantage of the <code class="literal">multipart/alternative</code> MIME type is create a different view template for each
+        alternative representation of the email body. You give the view templates the same name as
+        the mailer action they are for and place the content type the view template is providing in
+        the filename before the name of the template handler. So, for the <code class="classname">OrderMailer</code>'s <code class="methodname">confirmation</code> action you'd have the
+        following view templates:</p><div class="comment_container" name="c_actionmailer_id316199" id="c_actionmailer_id316199"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id316199">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="itemizedlist" id="actionmailer_id316220"><ul><li><p id="actionmailer_id338044"><code class="filename">app/views/order_mailer/confirmation.text.plain.erb</code></p><div class="comment_container" name="c_actionmailer_id338044" id="c_actionmailer_id338044"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id338044">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="actionmailer_id338052"><code class="filename">app/views/order_mailer/confirmation.text.html.erb</code></p><div class="comment_container" name="c_actionmailer_id338052" id="c_actionmailer_id338052"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id338052">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li></ul></div><p id="actionmailer_id338060">Action Mailer automatically sets the content type of the email to <code class="literal">multipart/alternative</code> when multiple templates with the same name and different
+        content types are found for a particular mailer action. Each alternate representation of the
+        email body will be included in the email, allowing the recipient device to render the most
+        appropriate format.</p><div class="comment_container" name="c_actionmailer_id338060" id="c_actionmailer_id338060"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id338060">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="note"><h3 class="title">Note</h3><p id="actionmailer_id338074">If you add attachments or manually add parts to an email then the automatic rendering
+          of the mailer view templates, as described above, will not be performed. This means that
+          you'll need to manually add each part using the <code class="methodname">part</code> method and
+          manually set the content type to <code class="literal">multipart/alternative</code>, as the default
+          content type for multipart messages is <code class="literal">multipart/mixed</code>.</p><div class="comment_container" name="c_actionmailer_id338074" id="c_actionmailer_id338074"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id338074">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="actionmailer_id338096">Adding Attachments</h3></div></div></div><p id="actionmailer_id338101">Mailer models have an instance method named <code class="methodname">attachment</code> that
+        makes adding file attachments to email very simple. Following is a simple mailer that is
+        used to attach a funny image to a short email:</p><div class="comment_container" name="c_actionmailer_id338101" id="c_actionmailer_id338101"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id338101">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="informalexample" id="actionmailer_id338111"><pre class="programlisting" id="actionmailer_id338113">class LolcatMailer &lt; ActionMailer::Base
+  def picture_of_the_day(subscribers)
+    recipients subscribers
+    from       "daily-lolcat@canhaslolcats.com"
+    subject    "Your daily lolcat!"
+    body       "Enjoy!"
+    
+    attachment "image/jpg" do |a|
+      a.body = File.read(RAILS_ROOT + '/public/images/lolcat.jpg')
+    end
+  end
+end</pre><div class="comment_container" name="c_actionmailer_id338113" id="c_actionmailer_id338113"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id338113">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p id="actionmailer_id338124">As you can see from the example, all you have to do to add an attachment to an email is
+        call <code class="methodname">attachment</code> and pass in the content type of the file. Then you
+        set the body of the attachment to the file data. <code class="methodname">attachment</code> can
+        also be passed a hash of options to set multiple properties of the attachment can be set at
+        the same time.</p><div class="comment_container" name="c_actionmailer_id338124" id="c_actionmailer_id338124"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id338124">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="actionmailer_id338142">Configuration</h2></div></div></div><p id="actionmailer_id338147">Action Mailer supports sending email using SMTP or Sendmail. By default Action Mailer will
+      deliver email using <abbr class="abbrev">SMTP</abbr> to port <code class="literal">25</code> on localhost.
+        <code class="classname">ActionMailer::Base</code> takes a variety of configuration options for
+      connecting to your mail delivery subsystem. The configuration options that need to be set
+      differ depending on your method of mail delivery.</p><div class="comment_container" name="c_actionmailer_id338147" id="c_actionmailer_id338147"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id338147">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="actionmailer_id339472">SMTP Configuration</h3></div></div></div><p id="actionmailer_id339477"></p><div class="comment_container" name="c_actionmailer_id339477" id="c_actionmailer_id339477"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id339477">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="actionmailer_id339480">Sendmail Configuration</h3></div></div></div><p id="actionmailer_id339485"></p><div class="comment_container" name="c_actionmailer_id339485" id="c_actionmailer_id339485"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id339485">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div><div class="sect1" lang="en" xml:lang="en"><div class="titlepage"><div><div><h2 class="title" id="actionmailer_id339490">Testing Mailers</h2></div></div></div><p id="actionmailer_id339495">Just like everything in Rails, mailer models are readily testable.</p><div class="comment_container" name="c_actionmailer_id339495" id="c_actionmailer_id339495"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id339495">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="actionmailer_id339500">Unit Testing</h3></div></div></div><p id="actionmailer_id339505">Mailer unit tests are used to test the behavior of the mailer models themselves.
+          <code class="literal">ActionMailer</code> provides a specialized test case class <code class="literal">ActionMailer::TestCase</code>, which is a subclass of <code class="literal">ActiveSupport::TestCase</code>,that performs the necessary setup routines common to all
+        mailer tests.</p><div class="comment_container" name="c_actionmailer_id339505" id="c_actionmailer_id339505"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id339505">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="actionmailer_id339521"><code class="literal">ActionMailer::TestCase</code> sets up an instance of a <code class="literal">TMail::Mail</code> object, named <code class="literal">@expected</code>, that can be used in test
+        cases. The <code class="literal">@expected</code> mail object is initialized with a content type of
+          <code class="literal">text/plain</code>, a charset of <code class="literal">utf-8</code>, and a mime version
+        of <code class="literal">1.0</code></p><div class="comment_container" name="c_actionmailer_id339521" id="c_actionmailer_id339521"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id339521">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="actionmailer_id339548"><code class="literal">ActionMailer::TestCase</code> also includes the <code class="literal">ActionMailer::Quoting</code> module. The <code class="literal">ActionMailer::Quoting</code>
+        module provides...</p><div class="comment_container" name="c_actionmailer_id339548" id="c_actionmailer_id339548"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id339548">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><div class="itemizedlist" id="actionmailer_id339559"><ul><li><p id="actionmailer_id339564">Including <code class="literal">ActionMailer::Quoting</code></p><div class="comment_container" name="c_actionmailer_id339564" id="c_actionmailer_id339564"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id339564">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="actionmailer_id317892">
+            </p><div class="informalexample" id="actionmailer_id317894"><pre class="programlisting" id="actionmailer_id317896">ActionMailer::Base.delivery_method = :test
+ActionMailer::Base.perform_deliveries = true
+ActionMailer::Base.deliveries = []</pre><div class="comment_container" name="c_actionmailer_id317896" id="c_actionmailer_id317896"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id317896">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p>
+          </p><div class="comment_container" name="c_actionmailer_id317892" id="c_actionmailer_id317892"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id317892">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li><li><p id="actionmailer_id317908">
+            </p><div class="informalexample" id="actionmailer_id317910"><pre class="programlisting" id="actionmailer_id317912">@expected = TMail::Mail.new
+@expected.set_content_type "text", "plain", { "charset" =&gt; charset }
+@expected.mime_version = '1.0'</pre><div class="comment_container" name="c_actionmailer_id317912" id="c_actionmailer_id317912"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id317912">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div><p>
+          </p><div class="comment_container" name="c_actionmailer_id317908" id="c_actionmailer_id317908"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id317908">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></li></ul></div></div><div class="sect2" lang="en" xml:lang="en"><div class="titlepage"><div><div><h3 class="title" id="actionmailer_id317925">Functional Testing</h3></div></div></div><p id="actionmailer_id317930">When testing </p><div class="comment_container" name="c_actionmailer_id317930" id="c_actionmailer_id317930"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id317930">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div><p id="actionmailer_id317933"><code class="literal">ActionMailer</code> adds two additional assertions <code class="literal">assert_emails</code> and <code class="literal">assert_no_emails</code> to the Rails testing
+        framework. These assertions simplify the common task of asserting that an expected number of
+        emails are sent by the code under test.</p><div class="comment_container" name="c_actionmailer_id317933" id="c_actionmailer_id317933"><p class="comment_count">
+          <a class="comment_count" href="ch05.html#">No comments yet</a>
+      </p><div class="comment" id="comments_for_actionmailer_id317933">
+
+
+        <h4><a href="ch05.html#" class="make_comment">Add a comment</a></h4></div><div class="reset"></div></div></div></div></div><!-- Comment form -->
+
+   <div id="comment_form_main" class="comment_form">
+
+
+<h5>You must sign in or <a href="register.html">register</a> before commenting</h5>
+
+  <form action="signin.html" method="post"><table>
+     <tr class="field">
+<td class="label" valign="top"><label>Username:</label></td>
+<td class="field" colspan="2" valign="top"><input id="username" name="username" type="text" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input name="redirect_to" type="hidden" value="http://rails-nutshell.labs.oreilly.com/ch05.html" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input name="xml_id" type="hidden" /></td>
+</tr>
+     <tr class="field">
+<td class="label" valign="top"><label>Password:</label></td>
+<td class="field" colspan="2" valign="top"><input id="password" name="password" type="password" /></td>
+</tr>
+  <tr class="field">
+<td class="label" valign="top"><label></label></td>
+<td class="field" colspan="2" valign="top"><input id="submit" name="submit" type="submit" value="Sign in" /></td>
+</tr>
+  </table></form>
+
+
+
+</div>
+
+
+<div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ch04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="re01.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Chapter 4. Active Resource </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> assert_emails</td></tr></table></div><div class="footer-copyright"></div></body></html>

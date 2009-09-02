@@ -1,0 +1,107 @@
+/* User-interface controls for OFPS application */
+
+.comment {
+  margin-left: 1em;
+  display:none;
+}
+
+a.comment_count {
+  color: gray;
+  text-decoration:underline;
+}
+
+div.reset {
+  display:block;
+  margin-bottom: 1em;
+}
+p.comment_count {
+  font-size:80%;
+  text-align: right;
+}
+h4.make_comment {
+  margin-left: 20px;
+}
+a.make_comment:hover, a.make_comment:link, a.make_comment:visited {
+  text-decoration:underline;
+}
+#comment_form_main {
+  display:none;
+}
+div.comment ol {
+  list-style-type: none;        
+}
+div.comment ol li {
+  background:rgb(238, 238, 255);
+  border: 1px solid navy;
+  margin-top: .5em;
+  padding:.4em;
+  margin-left:0;
+}
+.comment_author {
+  font-weight: bold;
+  padding-right: 2em;
+}
+.comment_created {
+  color: gray;
+}
+.comment_content {
+  font-size: .8em;
+  margin-top: 1em;
+}
+.comment_form {
+  margin: 1em;
+  margin-left: 20px;
+}
+.comment_form .required {
+  display:none;
+}
+.comments_instructions a {
+  text-decoration: underline;
+}
+.comments_instructions  {
+  font-size: small;
+  color:gray;
+}
+
+/* Header Styles */
+.oreilly-header { 
+  height: 32px;
+  background-image: url(/oreilly-header.jpg);
+  background-repeat: repeat-x;
+  max-width: 100%;
+
+  font-size: 12px;
+  color: rgb(169,169,169);
+  text-transform:uppercase;
+}
+.oreilly-header ul { 
+  margin-left: 0;
+  padding-left: 0;
+  display: inline;
+  line-height: 32px; /* half the height */
+}  
+
+.oreilly-header ul li { 
+  list-style: none;
+  display: inline;
+  margin-left: 3em;
+}  
+
+.oreilly-header ul li p { 
+  display: inline;
+}  
+
+.oreilly-header a { 
+  color: rgb(214,214,214) !important;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+}
+
+.oreilly-header img { 
+  border: 0; 
+  margin: 0; 
+  padding: 0;
+  display: block; 
+  float: left;
+}
+
