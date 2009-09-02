@@ -58,11 +58,12 @@ body > div {
 
 .navheader, .navfooter {
   margin: 0;
-  padding: 1em 0 0 0;
+  padding: 1em;
 }
-/*.navheader {
-  margin: 1em 0 0 0;
-}*/
+
+.navfooter {
+  margin-top: 0.5em;
+}
 
 h1, h2, h3, h4, h5 {
   color: #990000;
