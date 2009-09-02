@@ -37,6 +37,14 @@ body > div {
   background: #fff;
 }
 
+.navheader table,
+.navfooter table {
+  width: 550px;
+  margin-right: auto;
+  margin-left: auto;
+  font-size: large;
+}
+
 .author {
   margin: 0;
   color: black;
